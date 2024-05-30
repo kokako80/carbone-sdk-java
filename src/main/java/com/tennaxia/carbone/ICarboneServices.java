@@ -20,6 +20,15 @@ public interface ICarboneServices {
      */
     void deleteTemplate(String templateId) throws CarboneException;
 
+
+    /**
+     * Download rendered report
+     * @param templateId id returned by renderReport()
+     * @return report content in byte[]
+     * @throws CarboneException contain CarboneResponse format with API error code and error messages
+     */
+    byte[] getTemplate(String templateId) throws CarboneException;
+
     /**
      * Render report with default option (pdf file format and UseLosslessCompression disabled)
      * @param renderData Json object with data set to replace in template
@@ -28,6 +37,8 @@ public interface ICarboneServices {
      * @throws CarboneException contain CarboneResponse format with API error code and error messages
      */
     String renderReport(Object renderData, String templateId) throws CarboneException;
+
+    
 
     /**
      * Render report with custom options
@@ -46,4 +57,8 @@ public interface ICarboneServices {
      * @throws CarboneException contain CarboneResponse format with API error code and error messages
      */
     byte[] getReport(String renderId) throws CarboneException;
+
+    String getStatus() throws CarboneException;
+
+    public byte[] render(String fileOrTemplateID, Object Json) throws CarboneException;
 }
