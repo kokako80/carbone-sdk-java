@@ -8,7 +8,7 @@ import feign.Response;
 import feign.codec.Decoder;
 import feign.gson.GsonDecoder;
 
-class CarboneRendererDecoder implements Decoder {
+class CarboneDecoder implements Decoder {
     @Override
     public Object decode(Response response, Type type) throws IOException, FeignException {
         if (type.equals(CarboneFileResponse.class)) {

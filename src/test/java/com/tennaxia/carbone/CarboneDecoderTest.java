@@ -13,16 +13,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Request;
 import feign.Response;
 
-public class CarboneRendererDecoderTest {
+public class CarboneDecoderTest {
 
     private Request request;
-    private CarboneRendererDecoder carboneDecoder;
+    private CarboneDecoder carboneDecoder;
 
     @Before
     public void setUp() {
         request = Request.create(Request.HttpMethod.GET, "url", emptyMap(), Request.Body.empty(), null);
 
-        carboneDecoder = new CarboneRendererDecoder();
+        carboneDecoder = new CarboneDecoder();
     }
 
     @Test

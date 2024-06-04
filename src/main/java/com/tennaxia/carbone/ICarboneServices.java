@@ -36,7 +36,7 @@ public interface ICarboneServices {
      * @return id of rendered report
      * @throws CarboneException contain CarboneResponse format with API error code and error messages
      */
-    String renderReport(Object renderData, String templateId) throws CarboneException;
+    // String renderReport(Object renderData, String templateId) throws CarboneException;
 
     
 
@@ -48,7 +48,7 @@ public interface ICarboneServices {
      * @return id of rendered report
      * @throws CarboneException contain CarboneResponse format with API error code and error messages
      */
-    String renderReport(Object renderData, String templateId, Map<String, Object> additionalOptions) throws CarboneException;
+    String renderReport(String renderData, String templateId) throws CarboneException;
 
     /**
      * Download rendered report
@@ -60,5 +60,7 @@ public interface ICarboneServices {
 
     String getStatus() throws CarboneException;
 
-    public byte[] render(String fileOrTemplateID, Object Json) throws CarboneException;
+    public byte[] render(String fileOrTemplateID, String Json) throws CarboneException;
+
+    String generateTemplateId(String path) ;
 }

@@ -1,7 +1,6 @@
 package com.tennaxia.carbone;
 
 import feign.form.FormEncoder;
-import feign.gson.GsonDecoder;
 import feign.gson.GsonEncoder;
 import feign.slf4j.Slf4jLogger;
 import feign.jackson.JacksonDecoder;
@@ -19,15 +18,19 @@ public enum CarboneServicesFactory {
         {
             apiToken = token;
         }
+        if(version == "")
+        {
+            version = "4";
+        }
         var carboneTemplateClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, version)
             .encoder(new FormEncoder())
-            .decoder(new GsonDecoder())
+            .decoder(new CarboneDecoder())
             .logger(new Slf4jLogger(CarboneTemplateClient.class))
             .target(CarboneTemplateClient.class, CARBONE_URI + "/template");
 
         var carboneRenderClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, version)
             .encoder(new GsonEncoder())
-            .decoder(new CarboneRendererDecoder())
+            .decoder(new CarboneDecoder())
             .logger(new Slf4jLogger(CarboneRenderClient.class))
             .target(CarboneRenderClient.class, CARBONE_URI + "/render");
 

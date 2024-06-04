@@ -12,6 +12,6 @@ public interface ICarboneTemplateClient {
     @RequestLine("DELETE /{templateId}")
     CarboneResponse deleteTemplate(@Param("templateId") String templateId) throws CarboneException;
 
-    @RequestLine("GET /{renderId}")
+    @RequestLine("GET /{templateId}")
     CarboneFileResponse getTemplate(@Param("templateId") String templateId) throws CarboneException;
 }

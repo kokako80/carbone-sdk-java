@@ -45,14 +45,14 @@ final class CarboneServices implements ICarboneServices {
         carboneTemplateClient.deleteTemplate(templateId);
     }
 
-    @Override
-    public String renderReport(Object renderData, String templateId) throws CarboneException {
-        if(templateId instanceof String && checkPathIsAbsolute(templateId))
-        {
-            return renderReport(renderData, generateTemplateId(templateId), USE_LOSSLESS_COMPRESSION);
-        }
-        return renderReport(renderData, templateId, USE_LOSSLESS_COMPRESSION);
-    }
+    // @Override
+    // public String renderReport(Object renderData, String templateId) throws CarboneException {
+    //     if(templateId instanceof String && checkPathIsAbsolute(templateId))
+    //     {
+    //         return renderReport(renderData, generateTemplateId(templateId), USE_LOSSLESS_COMPRESSION);
+    //     }
+    //     return renderReport(renderData, templateId, USE_LOSSLESS_COMPRESSION);
+    // }
 
     public boolean checkPathIsAbsolute(String path) {
         Path p = Paths.get(path);
@@ -94,7 +94,7 @@ final class CarboneServices implements ICarboneServices {
         }
     }
 
-    public byte[] render(String fileOrTemplateID, Object Json) throws CarboneException
+    public byte[] render(String fileOrTemplateID, String Json) throws CarboneException
     {
         if (fileOrTemplateID == null || fileOrTemplateID.isEmpty()) {
             throw new CarboneException("Carbone SDK render error: argument is missing: file_or_template_id");
@@ -140,9 +140,13 @@ final class CarboneServices implements ICarboneServices {
         return getReport(resp);
     }
     @Override
-    public String renderReport(Object renderData, String templateId, Map<String, Object> additionalOptions) throws CarboneException {
-        CarboneResponse carboneResponse = carboneRenderClient
-            .renderReport(new CarboneData(renderData, "pdf", additionalOptions), templateId);
+    public String renderReport(String renderData, String templateId) throws CarboneException {
+        if(templateId instanceof String && checkPathIsAbsolute(templateId))
+        {
+            CarboneResponse carboneResponse = carboneRenderClient.renderReport(renderData, generateTemplateId(templateId));
+            return carboneResponse.getData().getRenderId();
+        }
+        CarboneResponse carboneResponse = carboneRenderClient.renderReport(renderData, templateId);
         return carboneResponse.getData().getRenderId();
     }
 
@@ -155,7 +159,7 @@ final class CarboneServices implements ICarboneServices {
     @Override
     public byte[] getTemplate(String templateId) throws CarboneException 
     {
-        CarboneFileResponse response = carboneRenderClient.getReport(templateId);
+        CarboneFileResponse response = carboneTemplateClient.getTemplate(templateId);
         return response.getFileContent();
     }
 
