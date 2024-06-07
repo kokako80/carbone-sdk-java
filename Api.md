@@ -34,7 +34,7 @@ Try the following code to render a report in 10 seconds. Just replace your API k
 - [Delete a template](#delete_template)
 - [Get a template](#get_template)
 - [Generate a template ID](#generate_template_Id)
-- [Set access token](#set_access_token)
+- [Set access token](#set_access_URI)
 - [Get API status](#get_status)
 
 ### CarboneSDK Constructor
@@ -61,6 +61,9 @@ def String renderReport(Object renderData, String templateId)
 The render function takes `templateID` a template ID, `renderData` a stringified JSON.
 
 It returns the report as a `bytes` and a unique report name as a `string`. Carbone engine deletes files that have not been used for a while. By using this method, if your file has been deleted, the SDK will automatically upload it again and return you the result.
+
+When a **template ID** is passed as an argument, the function renders with [render_report](#render_report) then call [get_report](#get_report) to return the report. If the template ID does not exist, an error is returned.
+
 
 **Example**
 
@@ -101,15 +104,18 @@ carboneServices.deleteTemplate(templateId.get());
 **Definition**
 ```java
 def String generateTemplateId(String path)
+```
+The Template ID is predictable and idempotent, pass the template path and it will return the `template_id`.
 
+```java
 String path = "Use/your/local/path";
 String newTemplateId = generateTemplateId(path);
 ```
 
-### set_access_token
+### set_access_URI
 **Definition**
 ```java
-def void SetCARBONE_URI(String newCARBONE_URI)
+def void SetCARBONEURI(String newCARBONE_URI)
 ```
 It sets the Carbone access token.
 
@@ -118,7 +124,7 @@ It sets the Carbone access token.
 
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
 
-carboneService.SetCARBONE_URI("NEW_CARBONE_RENDER_API_ACCESS_TOKEN");
+carboneService.SetCARBONEURI("NEW_CARBONE_RENDER_API_ACCESS_TOKEN");
 ```
 ### get_status
 **Definition**
