@@ -1,4 +1,4 @@
-package com.tennaxia.carbone;
+package io.carbone;
 
 import feign.form.FormEncoder;
 import feign.gson.GsonEncoder;
@@ -10,7 +10,7 @@ public enum CarboneServicesFactory {
 
     CARBONE_SERVICES_FACTORY_INSTANCE;
 
-    private static String CARBONE_URI = "https://render.carbone.io";
+    private static String CARBONE_URI = "https://api.carbone.io";
 
     public ICarboneServices create(String token, String version) {
         String apiToken = System.getenv("CARBONE_TOKEN");
@@ -18,10 +18,8 @@ public enum CarboneServicesFactory {
         {
             apiToken = token;
         }
-        if(version == "")
-        {
-            version = "4";
-        }
+
+         version = "4";
         var carboneTemplateClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, version)
             .encoder(new FormEncoder())
             .decoder(new CarboneDecoder())
@@ -48,5 +46,5 @@ public enum CarboneServicesFactory {
         return new CarboneServices(carboneTemplateClient, carboneRenderClient, carboneStatusClient);
     }
 
-    public static void SetCarbonne_Uri(String newUrl) {CARBONE_URI = newUrl;}
+    public static void SetCarbonneUri(String newUrl) {CARBONE_URI = newUrl;}
 }

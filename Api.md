@@ -18,24 +18,10 @@ Try the following code to render a report in 10 seconds. Just replace your API k
 
 ```java
     ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
-    MyJsonObject jsonObj = new MyJsonObject("john", "wick");
-    String renderId = carboneServices.renderReport(jsonObj, templateId.get());
+    String json = "{ \"data\": { \"firstname\": \"John\", \"lastname\": \"wick\"}";
     try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
-            outputStream.write(carboneServices.getReport(renderId));
+            outputStream.write(carboneServices.render("Use/your/local/path", json));
         }
-```
-Json part : 
-
-```java
-    public class MyJsonObject {
-    String firstName;
-    String lastName;
-
-    public MyJsonObject(String _firstName, String _lastName) {
-        this.firstName = _firstName;
-        this.lastName = _lastName;
-    }
-}
 ```
 
 ## Java SDK API
@@ -47,6 +33,7 @@ Json part :
 - [Add a template](#add_template)
 - [Delete a template](#delete_template)
 - [Get a template](#get_template)
+- [Generate a template ID](#generate_template_Id)
 - [Set access token](#set_access_token)
 - [Get API status](#get_status)
 
@@ -58,6 +45,9 @@ Json part :
 String token = "ACCESS-TOKEN";
 # Carbone access token passed as environment variable "CARBONE_TOKEN"
 String token = "";
+
+# Carbone the last version of the api is put automatically at the last version
+String version = "";
 ```
 Constructor to create a new instance of CarboneSDK.
 The access token can be pass as an argument or by the environment variable "CARBONE_TOKEN".
@@ -68,54 +58,15 @@ Get your API key on your Carbone account: https://account.carbone.io/.
 ```java
 def String renderReport(Object renderData, String templateId)
 ```
-The render function takes `templateID` a template ID, `renderData` a stringified JSON, and an optional `additionalOptions`.
+The render function takes `templateID` a template ID, `renderData` a stringified JSON.
 
 It returns the report as a `bytes` and a unique report name as a `string`. Carbone engine deletes files that have not been used for a while. By using this method, if your file has been deleted, the SDK will automatically upload it again and return you the result.
 
-When a **template ID** is passed as an argument, the function renders with [render_report](#render_report) then call [get_report](#get_report) to return the report. If the template ID does not exist, an error is returned.
-
 **Example**
 
-
 ```java
-public class MyJsonObject {
-    String firstName;
-    String lastName;
-
-    public MyJsonObject(String _firstName, String _lastName) {
-        this.firstName = _firstName;
-        this.lastName = _lastName;
-    }
-}
-```
-
-```java
-MyJsonObject jsonObj = new MyJsonObject("john,", "wick");
-/**
- *  {
- *      firstName: "john",
- *      test_key2: "wick",
- *  }
- **/
-
-String renderId = carboneServices.renderReport(jsonObj, templateId.get());
-```
-
-By default, rendered report will be in PDF and with option `UseLosslessCompression` at false.
-You can also call render with additional option for PDF rendering (see: [PDF export filter options](https://carbone.io/api-reference.html#pdf-export-filter-options)).
-To do so, you need to add a `Map<String, Object>` to method call 
-
-```java
-def String renderReport(Object renderData, String templateId, Map<String, Object> additionalOptions)
-```
-
-```java
-Map<String, Object> additionalOptions = Map.ofEntries(
-    Map.entry("UseLosslessCompression", true),
-    Map.entry("DocumentOpenPassword", "password"),
-    Map.entry("EncryptFile", true)
-    );
-String renderId = carboneServices.renderReport(jsonObj, templateId.get(), additionalOptions);
+String json = "{ \"data\": { \"firstname\": \"John\", \"lastname\": \"wick\"}";
+String renderId = carboneServices.renderReport(jsonObj, "Use/your/local/path");
 ```
 
 ### addTemplate
@@ -145,6 +96,14 @@ def void deleteTemplate(String templateId)
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
 
 carboneServices.deleteTemplate(templateId.get());
+```
+### generate_template_Id
+**Definition**
+```java
+def String generateTemplateId(String path)
+
+String path = "Use/your/local/path";
+String newTemplateId = generateTemplateId(path);
 ```
 
 ### set_access_token

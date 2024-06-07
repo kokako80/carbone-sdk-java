@@ -1,13 +1,10 @@
-package com.tennaxia.carbone;
-
-import static java.util.Optional.empty;
+package io.carbone;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
 import java.util.Optional;
 
 import feign.Response;
@@ -18,8 +15,7 @@ import java.io.IOException;
 
 final class CarboneServices implements ICarboneServices {
 
-    private static final Map<String, Object> USE_LOSSLESS_COMPRESSION = Map.of("UseLosslessCompression", false);
-
+    int err;
     private final ICarboneTemplateClient carboneTemplateClient;
     private final ICarboneRenderClient carboneRenderClient;
     private final ICarboneStatusClient carboneStatusClient ;
@@ -33,26 +29,13 @@ final class CarboneServices implements ICarboneServices {
     @Override
     public Optional<String> addTemplate(byte[] templateFile) throws CarboneException {
         CarboneResponse carboneResponse = carboneTemplateClient.addTemplate(templateFile);
-        if (carboneResponse.isSuccess()) {
-            return Optional.of(carboneResponse.getData().getTemplateId());
-        } else {
-            return empty();
-        }
+        return Optional.of(carboneResponse.getData().getTemplateId());
     }
 
     @Override
-    public void deleteTemplate(String templateId) throws CarboneException {
+    public void deleteTemplate(String templateId) throws CarboneException { 
         carboneTemplateClient.deleteTemplate(templateId);
     }
-
-    // @Override
-    // public String renderReport(Object renderData, String templateId) throws CarboneException {
-    //     if(templateId instanceof String && checkPathIsAbsolute(templateId))
-    //     {
-    //         return renderReport(renderData, generateTemplateId(templateId), USE_LOSSLESS_COMPRESSION);
-    //     }
-    //     return renderReport(renderData, templateId, USE_LOSSLESS_COMPRESSION);
-    // }
 
     public boolean checkPathIsAbsolute(String path) {
         Path p = Paths.get(path);
@@ -86,7 +69,6 @@ final class CarboneServices implements ICarboneServices {
                 if (hex.length() == 1) hexString.append(0);
                 hexString.append(hex);
             }
-    
             return hexString.toString();
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,7 +76,7 @@ final class CarboneServices implements ICarboneServices {
         }
     }
 
-    public byte[] render(String fileOrTemplateID, String Json) throws CarboneException
+    public byte[] render(String Json, String fileOrTemplateID) throws CarboneException
     {
         if (fileOrTemplateID == null || fileOrTemplateID.isEmpty()) {
             throw new CarboneException("Carbone SDK render error: argument is missing: file_or_template_id");
@@ -102,43 +84,48 @@ final class CarboneServices implements ICarboneServices {
         if (Json == null) {
             throw new CarboneException("Carbone SDK render error: argument is missing: json_data");
         }
-        String resp = null;
+        CarboneResponse resp = null;
         File file = new File(fileOrTemplateID);
         if (!file.exists()) {
-            resp = renderReport(Json, fileOrTemplateID);
+            resp = carboneRenderClient.renderReport(Json, fileOrTemplateID);
         } 
         else {
             try {
                 String templateId = generateTemplateId(fileOrTemplateID);
-                resp = renderReport(Json, templateId);
-            } catch (Exception e) {
-                throw new CarboneException("Carbone SDK render error: failed to generate the template id");
-            }
-            if ( resp.contains("404") && checkPathIsAbsolute(fileOrTemplateID)) {
-                try {
-                    Path filePath = Paths.get(fileOrTemplateID);
-                    Optional<String> respAddTemplate = addTemplate(Files.readAllBytes(filePath));
-                    if (respAddTemplate.isPresent() && !respAddTemplate.get().equals("success")) {
-                        resp = renderReport(Json, respAddTemplate.get());
-                    } else {
-                        throw new CarboneException("Carbone SDK render error: failed to add template");
+                resp = carboneRenderClient.renderReport(Json, templateId);
+            } catch (CarboneException e) {
+                if(e.getHttpStatus() == 404) 
+                {
+                    try {
+                        Path filePath = Paths.get(fileOrTemplateID);
+                        CarboneResponse respAddTemplate = carboneTemplateClient.addTemplate(Files.readAllBytes(filePath));
+                        if (respAddTemplate.isSuccess()) {
+                            resp = carboneRenderClient.renderReport(Json, respAddTemplate.getData().getTemplateId());
+                        } else {
+                            throw new CarboneException("Carbone SDK render error: failed to add template");
+                        }
+                    } catch (IOException err) {
+                        throw new CarboneException("Carbone SDK render error: failed to read template file");
                     }
-                } catch (IOException e) {
-                    throw new CarboneException("Carbone SDK render error: failed to read template file");
+                }
+                else{
+                    throw new CarboneException("Carbone SDK render error: failed to generate the template id");
                 }
             }
         }
         if (resp == null) {
             throw new CarboneException("Carbone SDK render error: something went wrong");
         }
-        if (resp.contains("false")) {
-            //throw new CarboneException("Carbone SDK render error: " + ((Map) resp).get("error"));
+        if (!resp.isSuccess()) {
+            throw new CarboneException("Carbone SDK render error: ");
         }
-        if (resp.contains("false")) {
+        if (!resp.isSuccess()) {
             throw new CarboneException("Carbone SDK render error: render_id empty");
         }
-        return getReport(resp);
+        return getReport(resp.getData().getRenderId());
     }
+
+
     @Override
     public String renderReport(String renderData, String templateId) throws CarboneException {
         if(templateId instanceof String && checkPathIsAbsolute(templateId))
@@ -146,6 +133,7 @@ final class CarboneServices implements ICarboneServices {
             CarboneResponse carboneResponse = carboneRenderClient.renderReport(renderData, generateTemplateId(templateId));
             return carboneResponse.getData().getRenderId();
         }
+
         CarboneResponse carboneResponse = carboneRenderClient.renderReport(renderData, templateId);
         return carboneResponse.getData().getRenderId();
     }

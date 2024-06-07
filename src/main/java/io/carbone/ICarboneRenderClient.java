@@ -1,13 +1,9 @@
-package com.tennaxia.carbone;
+package io.carbone;
 
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import feign.Body;
-import feign.Feign;
-import feign.Feign.Builder;
 public interface ICarboneRenderClient {
     @RequestLine("POST /{templateId}")
 

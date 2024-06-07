@@ -1,12 +1,17 @@
-package com.tennaxia.carbone;
+package io.carbone;
 
-import static com.tennaxia.carbone.CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE;
+import static io.carbone.CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Optional;
 
 import org.junit.Test;
+
+import io.carbone.CarboneException;
+import io.carbone.CarboneFileResponse;
+import io.carbone.CarboneResponse;
+import io.carbone.ICarboneTemplateClient;
 
 public class CarboneServicesTest {
 

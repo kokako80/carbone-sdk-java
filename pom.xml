@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.tennaxia.carbone</groupId>
+    <groupId>io.carbone</groupId>
     <artifactId>carbone-sdk-java</artifactId>
     <version>1.0.0-RC1</version>
     <packaging>jar</packaging>
@@ -19,16 +19,6 @@
             <url>http://www.opensource.org/licenses/mit-license.php</url>
         </license>
     </licenses>
-
-    <developers>
-        <developer>
-            <name>Benjamin COLOMBE</name>
-            <email>bcolombe@tennaxia.com</email>
-            <organization>Tennaxia</organization>
-            <organizationUrl>https://www.tennaxia.com/</organizationUrl>
-        </developer>
-    </developers>
-
     <scm>
         <connection>scm:git:git://github.com/Tennaxia/CarbonIO-JAVA-SDK.git</connection>
         <developerConnection>scm:git:ssh://github.com/Tennaxia/CarbonIO-JAVA-SDK.git</developerConnection>

@@ -1,4 +1,4 @@
-package com.tennaxia.carbone;
+package io.carbone;
 
 import feign.Headers;
 import feign.Param;

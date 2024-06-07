@@ -1,4 +1,4 @@
-package com.tennaxia.carbone;
+package io.carbone;
 
 import static java.util.Collections.emptyMap;
 
@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import feign.Request;
 import feign.Response;
+import io.carbone.CarboneFileResponse;
+import io.carbone.CarboneResponse;
 
 public class CarboneDecoderTest {
 

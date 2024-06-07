@@ -1,6 +1,5 @@
-package com.tennaxia.carbone;
+package io.carbone;
 
-import java.util.Map;
 import java.util.Optional;
 
 public interface ICarboneServices {
@@ -30,25 +29,13 @@ public interface ICarboneServices {
     byte[] getTemplate(String templateId) throws CarboneException;
 
     /**
-     * Render report with default option (pdf file format and UseLosslessCompression disabled)
-     * @param renderData Json object with data set to replace in template
+     * Render report
+     * @param json Json object with data set to replace in template
      * @param templateId id returned by addTemplate() method
      * @return id of rendered report
      * @throws CarboneException contain CarboneResponse format with API error code and error messages
      */
-    // String renderReport(Object renderData, String templateId) throws CarboneException;
-
-    
-
-    /**
-     * Render report with custom options
-     * @param renderData Json object with data set to replace in template
-     * @param templateId id returned by addTemplate() method
-     * @param additionalOptions map of additional pdf options
-     * @return id of rendered report
-     * @throws CarboneException contain CarboneResponse format with API error code and error messages
-     */
-    String renderReport(String renderData, String templateId) throws CarboneException;
+    String renderReport(String json, String templateId) throws CarboneException;
 
     /**
      * Download rendered report
@@ -58,9 +45,30 @@ public interface ICarboneServices {
      */
     byte[] getReport(String renderId) throws CarboneException;
 
+
+    /**
+     * Give the status
+     * @param renderId id returned by renderReport()
+     * @return report content in String
+     * @throws CarboneException contain CarboneResponse format with API error code and error messages
+     */
     String getStatus() throws CarboneException;
 
-    public byte[] render(String fileOrTemplateID, String Json) throws CarboneException;
+    /**
+     * render report
+     * @param fileOrTemplateID id returned by addTemplate() method or the id of document of studio or a local path
+     * @param renderData Json object with data set to replace in template
+     * @return report content in byte[]
+     * @throws CarboneException contain CarboneResponse format with API error code and error messages
+     */
+    public byte[] render(String Json, String fileOrTemplateID) throws CarboneException;
 
+     /**
+     * precalculates the template id 
+     * @param fileOrTemplateID local path
+     * @return give a precalculates templateId 
+     * @throws CarboneException contain CarboneResponse format with API error code and error messages
+     */
     String generateTemplateId(String path) ;
+    
 }
