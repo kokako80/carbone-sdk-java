@@ -1,17 +1,22 @@
 package io.carbone;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 
+import feign.FeignException;
 import feign.Response;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 final class CarboneServices implements ICarboneServices {
 
@@ -19,6 +24,7 @@ final class CarboneServices implements ICarboneServices {
     private final ICarboneTemplateClient carboneTemplateClient;
     private final ICarboneRenderClient carboneRenderClient;
     private final ICarboneStatusClient carboneStatusClient ;
+    String reportName;
 
     public CarboneServices(ICarboneTemplateClient carboneTemplateClient, ICarboneRenderClient carboneRenderClient, ICarboneStatusClient carboneStatusClient) {
         this.carboneTemplateClient = carboneTemplateClient;
@@ -28,7 +34,9 @@ final class CarboneServices implements ICarboneServices {
 
     @Override
     public Optional<String> addTemplate(byte[] templateFile) throws CarboneException {
+        System.out.println("test");
         CarboneResponse carboneResponse = carboneTemplateClient.addTemplate(templateFile);
+        System.out.println(carboneResponse);
         return Optional.of(carboneResponse.getData().getTemplateId());
     }
 
@@ -76,7 +84,7 @@ final class CarboneServices implements ICarboneServices {
         }
     }
 
-    public byte[] render(String Json, String fileOrTemplateID) throws CarboneException
+    public CarboneDocument render(String Json, String fileOrTemplateID) throws CarboneException
     {
         if (fileOrTemplateID == null || fileOrTemplateID.isEmpty()) {
             throw new CarboneException("Carbone SDK render error: argument is missing: file_or_template_id");
@@ -139,10 +147,10 @@ final class CarboneServices implements ICarboneServices {
     }
 
     @Override
-    public byte[] getReport(String renderId) throws CarboneException {
-        CarboneFileResponse response = carboneRenderClient.getReport(renderId);
-        return response.getFileContent();
-    }
+    public CarboneDocument getReport(String renderId) throws CarboneException {
+        CarboneDocument response = carboneRenderClient.getReport(renderId);
+        return response;
+    } 
 
     @Override
     public byte[] getTemplate(String templateId) throws CarboneException 
@@ -154,8 +162,46 @@ final class CarboneServices implements ICarboneServices {
     @Override
     public String getStatus() throws CarboneException 
     {
-        Response response = carboneStatusClient.getStatus();
-        return response.body().toString();
+        Response response = null;
+        try {
+            response = carboneStatusClient.getStatus();
+            InputStream bodyIs = response.body().asInputStream();
+            String body = new String(bodyIs.readAllBytes(), StandardCharsets.UTF_8);
+            return body;
+        } catch (IOException e) {
+            throw new CarboneException("Error reading response body");
+        } catch (FeignException e) {
+            throw new CarboneException("Feign exception occurred");
+        } finally {
+            if (response != null && response.body() != null) {
+                try {
+                    response.body().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
-    
+
+    public String takeReportName(Map<String,Collection<String>> headers) {
+        Collection<String> contentDisposition = headers.get("content-disposition");
+        if (contentDisposition == null || contentDisposition.isEmpty()) {
+            return null;
+        }
+        
+        
+        String disposition = contentDisposition.iterator().next();
+        String[] splitContentDisposition = disposition.split("=");
+
+        if (splitContentDisposition.length != 2) {
+            return null;
+        }
+        
+        reportName = splitContentDisposition[1];
+        if (reportName.startsWith("\"") && reportName.endsWith("\"")) {
+            reportName = reportName.substring(1, reportName.length() - 1);
+        }
+        
+        return reportName;
+    }
 }

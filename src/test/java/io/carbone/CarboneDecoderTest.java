@@ -12,9 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import feign.Request;
 import feign.Response;
-import io.carbone.CarboneFileResponse;
-import io.carbone.CarboneResponse;
-
 public class CarboneDecoderTest {
 
     private Request request;
@@ -52,6 +49,25 @@ public class CarboneDecoderTest {
     public void doitDecoderUneCarboneFileResponse() throws IOException {
         //GIVEN
         CarboneFileResponse carboneResponse = new CarboneFileResponse(new byte[]{});
+
+        Response feignResponse = Response.builder()
+            .request(request)
+            .body(new ObjectMapper().writeValueAsBytes(carboneResponse))
+            .build();
+
+
+        // WHEN
+        Object decodedObj = carboneDecoder.decode(feignResponse, CarboneFileResponse.class);
+
+        // THEN
+        Assertions.assertThat(decodedObj)
+            .isInstanceOf(CarboneFileResponse.class);
+    }
+
+    @Test
+    public void doitDecoderUneCarboneDocument() throws IOException {
+        //GIVEN
+        CarboneDocument carboneResponse = new CarboneDocument(new byte[]{}, new String());
 
         Response feignResponse = Response.builder()
             .request(request)

@@ -11,9 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import feign.Request;
 import feign.Response;
-import io.carbone.CarboneErrorDecoder;
-import io.carbone.CarboneException;
-import io.carbone.CarboneResponse;
 
 public class CarboneErrorDecoderTest {
     private Request request;

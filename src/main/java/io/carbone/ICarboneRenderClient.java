@@ -14,5 +14,6 @@ public interface ICarboneRenderClient {
     
 
     @RequestLine("GET /{renderId}")
-    CarboneFileResponse getReport(@Param("renderId") String renderId) throws CarboneException;
+    @Headers("Content-Type: application/String")
+    CarboneDocument getReport(@Param("renderId") String renderId) throws CarboneException;
 }

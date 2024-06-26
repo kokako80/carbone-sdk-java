@@ -40,10 +40,10 @@ public interface ICarboneServices {
     /**
      * Download rendered report
      * @param renderId id returned by renderReport()
-     * @return report content in byte[]
+     * @return report content in CarboneDocument
      * @throws CarboneException contain CarboneResponse format with API error code and error messages
      */
-    byte[] getReport(String renderId) throws CarboneException;
+    CarboneDocument getReport(String renderId) throws CarboneException;
 
 
     /**
@@ -58,10 +58,10 @@ public interface ICarboneServices {
      * render report
      * @param fileOrTemplateID id returned by addTemplate() method or the id of document of studio or a local path
      * @param renderData Json object with data set to replace in template
-     * @return report content in byte[]
+     * @return report content in CarboneDocument
      * @throws CarboneException contain CarboneResponse format with API error code and error messages
      */
-    public byte[] render(String Json, String fileOrTemplateID) throws CarboneException;
+    CarboneDocument render(String Json, String fileOrTemplateID) throws CarboneException;
 
      /**
      * precalculates the template id 
@@ -69,6 +69,6 @@ public interface ICarboneServices {
      * @return give a precalculates templateId 
      * @throws CarboneException contain CarboneResponse format with API error code and error messages
      */
-    String generateTemplateId(String path) ;
+    String generateTemplateId(String path);
     
 }

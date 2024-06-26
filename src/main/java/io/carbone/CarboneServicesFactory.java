@@ -3,8 +3,6 @@ package io.carbone;
 import feign.form.FormEncoder;
 import feign.gson.GsonEncoder;
 import feign.slf4j.Slf4jLogger;
-import feign.jackson.JacksonDecoder;
-import feign.jackson.JacksonEncoder;
 
 public enum CarboneServicesFactory {
 
@@ -19,7 +17,7 @@ public enum CarboneServicesFactory {
             apiToken = token;
         }
 
-         version = "4";
+        version = "4";
         var carboneTemplateClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, version)
             .encoder(new FormEncoder())
             .decoder(new CarboneDecoder())
@@ -33,8 +31,8 @@ public enum CarboneServicesFactory {
             .target(CarboneRenderClient.class, CARBONE_URI + "/render");
 
         var carboneStatusClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, version)
-            .encoder(new JacksonEncoder())
-            .decoder(new JacksonDecoder())
+            .encoder(new GsonEncoder())
+            .decoder(new CarboneDecoder())
             .logger(new Slf4jLogger(CarboneStatusClient.class))
             .target(CarboneStatusClient.class, CARBONE_URI);
 

@@ -19,8 +19,9 @@ Try the following code to render a report in 10 seconds. Just replace your API k
 ```java
     ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
     String json = "{ \"data\": { \"firstname\": \"John\", \"lastname\": \"wick\"}";
+    CarboneDocument documentRender = carboneServices.render("Use/your/local/path", json)
     try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
-            outputStream.write(carboneServices.render("Use/your/local/path", json));
+            outputStream.write(ducumentRender.getFileContent());
         }
 ```
 
@@ -29,7 +30,8 @@ Try the following code to render a report in 10 seconds. Just replace your API k
 ### Functions overview
 
 - [CarboneSDK Constructor](#carbonesdk-constructor)
-- [Render function](#render)
+- [Render function](#render_report)
+- [Get a template](#get_report)
 - [Add a template](#add_template)
 - [Delete a template](#delete_template)
 - [Get a template](#get_template)
@@ -53,7 +55,7 @@ Constructor to create a new instance of CarboneSDK.
 The access token can be pass as an argument or by the environment variable "CARBONE_TOKEN".
 Get your API key on your Carbone account: https://account.carbone.io/.
 
-### Render
+### render_report
 **Definition**
 ```java
 def String renderReport(Object renderData, String templateId)
@@ -68,11 +70,34 @@ When a **template ID** is passed as an argument, the function renders with [rend
 **Example**
 
 ```java
+
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+
 String json = "{ \"data\": { \"firstname\": \"John\", \"lastname\": \"wick\"}";
 String renderId = carboneServices.renderReport(jsonObj, "Use/your/local/path");
+
+System.out.println(renderId)
 ```
 
-### addTemplate
+### get_report
+**Definition**
+```java
+def CarboneDocument getReport(String renderId)
+```
+
+**Example**
+
+```java
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+
+CarboneDocument renderDocument = carboneServices.getReport(renderId);
+
+System.out.println(renderDocument.getFileContent())
+System.out.println(renderDocument.name())
+```
+
+
+### add_template
 **Definition**
 ```java
 def Optional<String> addTemplate(byte[] templateFile)
@@ -85,6 +110,8 @@ Add the template to the API and returns the response (that contains a `template_
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
 
 Optional<String> templateId = carboneServices.addTemplate(Files.readAllBytes(testFilePath));
+
+System.out.println(templateId.get())
 ```
 
 ### delete_template
@@ -108,8 +135,12 @@ def String generateTemplateId(String path)
 The Template ID is predictable and idempotent, pass the template path and it will return the `template_id`.
 
 ```java
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+
 String path = "Use/your/local/path";
 String newTemplateId = generateTemplateId(path);
+
+System.out.println(newTemplateId)
 ```
 
 ### set_access_URI
@@ -139,8 +170,27 @@ def getStatus()
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
 
 String status = carboneServices.getStatus()
-// resp["success"] => True / False
-// resp["code"] => 200 / or any HTTP code
-// resp["message"] => "OK" / or an error message
-// resp["version"] => "4.6.7" / Version of Carbone running
+
+System.out.println(status)
+
+```
+
+
+### Build the project
+
+- at the root of the project
+```maven
+
+mvn clean
+
+mvn compile
+
+mvn package
+
+```
+
+- in other terminal 
+
+````
+mvn install:install-file -Dfile=/your/local/project  -DgroupId= io.carbone -DartifactId=CarboneSDK -Dversion= x.x.x  -Dpackaging=jar
 ```
