@@ -58,7 +58,7 @@ Get your API key on your Carbone account: https://account.carbone.io/.
 ### render_report
 **Definition**
 ```java
-def String renderReport(Object renderData, String templateId)
+def String renderReport(String renderData, String templateId)
 ```
 The render function takes `templateID` a template ID, `renderData` a stringified JSON.
 
@@ -67,7 +67,6 @@ It return a `renderId`, you can pass this `renderId` at [get_report](#get_report
 **Example**
 
 ```java
-
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
 
 String json = "{ \"data\": { \"firstname\": \"John\", \"lastname\": \"wick\"}";
