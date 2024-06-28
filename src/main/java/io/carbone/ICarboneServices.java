@@ -17,7 +17,7 @@ public interface ICarboneServices {
      * @param templateId id returned by addTemplate() method
      * @throws CarboneException contain CarboneResponse format with API error code and error messages
      */
-    void deleteTemplate(String templateId) throws CarboneException;
+    boolean deleteTemplate(String templateId) throws CarboneException;
 
 
     /**

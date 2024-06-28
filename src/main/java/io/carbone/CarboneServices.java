@@ -6,8 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 
 import feign.FeignException;
@@ -18,7 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-final class CarboneServices implements ICarboneServices {
+class CarboneServices implements ICarboneServices {
 
     int err;
     private final ICarboneTemplateClient carboneTemplateClient;
@@ -34,15 +32,14 @@ final class CarboneServices implements ICarboneServices {
 
     @Override
     public Optional<String> addTemplate(byte[] templateFile) throws CarboneException {
-        System.out.println("test");
         CarboneResponse carboneResponse = carboneTemplateClient.addTemplate(templateFile);
-        System.out.println(carboneResponse);
         return Optional.of(carboneResponse.getData().getTemplateId());
     }
 
     @Override
-    public void deleteTemplate(String templateId) throws CarboneException { 
-        carboneTemplateClient.deleteTemplate(templateId);
+    public boolean deleteTemplate(String templateId) throws CarboneException { 
+        CarboneResponse carboneResponse = carboneTemplateClient.deleteTemplate(templateId);
+        return carboneResponse.isSuccess();
     }
 
     public boolean checkPathIsAbsolute(String path) {
@@ -86,10 +83,10 @@ final class CarboneServices implements ICarboneServices {
 
     public CarboneDocument render(String Json, String fileOrTemplateID) throws CarboneException
     {
-        if (fileOrTemplateID == null || fileOrTemplateID.isEmpty()) {
+        if (fileOrTemplateID.isEmpty()) {
             throw new CarboneException("Carbone SDK render error: argument is missing: file_or_template_id");
         }
-        if (Json == null) {
+        if (Json.isEmpty()) {
             throw new CarboneException("Carbone SDK render error: argument is missing: json_data");
         }
         CarboneResponse resp = null;
@@ -108,7 +105,7 @@ final class CarboneServices implements ICarboneServices {
                         Path filePath = Paths.get(fileOrTemplateID);
                         CarboneResponse respAddTemplate = carboneTemplateClient.addTemplate(Files.readAllBytes(filePath));
                         if (respAddTemplate.isSuccess()) {
-                            resp = carboneRenderClient.renderReport(Json, respAddTemplate.getData().getTemplateId());
+                            resp = carboneRenderClient.renderReport(Json, respAddTemplate.getData().templateId);
                         } else {
                             throw new CarboneException("Carbone SDK render error: failed to add template");
                         }
@@ -125,9 +122,6 @@ final class CarboneServices implements ICarboneServices {
             throw new CarboneException("Carbone SDK render error: something went wrong");
         }
         if (!resp.isSuccess()) {
-            throw new CarboneException("Carbone SDK render error: ");
-        }
-        if (!resp.isSuccess()) {
             throw new CarboneException("Carbone SDK render error: render_id empty");
         }
         return getReport(resp.getData().getRenderId());
@@ -136,9 +130,10 @@ final class CarboneServices implements ICarboneServices {
 
     @Override
     public String renderReport(String renderData, String templateId) throws CarboneException {
-        if(templateId instanceof String && checkPathIsAbsolute(templateId))
+        if(checkPathIsAbsolute(templateId))
         {
-            CarboneResponse carboneResponse = carboneRenderClient.renderReport(renderData, generateTemplateId(templateId));
+            String newTemplateId = generateTemplateId(templateId);
+            CarboneResponse carboneResponse = carboneRenderClient.renderReport(renderData, newTemplateId);
             return carboneResponse.getData().getRenderId();
         }
 
@@ -181,27 +176,5 @@ final class CarboneServices implements ICarboneServices {
                 }
             }
         }
-    }
-
-    public String takeReportName(Map<String,Collection<String>> headers) {
-        Collection<String> contentDisposition = headers.get("content-disposition");
-        if (contentDisposition == null || contentDisposition.isEmpty()) {
-            return null;
-        }
-        
-        
-        String disposition = contentDisposition.iterator().next();
-        String[] splitContentDisposition = disposition.split("=");
-
-        if (splitContentDisposition.length != 2) {
-            return null;
-        }
-        
-        reportName = splitContentDisposition[1];
-        if (reportName.startsWith("\"") && reportName.endsWith("\"")) {
-            reportName = reportName.substring(1, reportName.length() - 1);
-        }
-        
-        return reportName;
     }
 }

@@ -1,8 +1,10 @@
 package io.carbone;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class CarboneException extends Exception {
     private final CarboneResponse carboneResponse;
     private final int httpStatus;

@@ -10,27 +10,36 @@ public enum CarboneServicesFactory {
 
     private static String CARBONE_URI = "https://api.carbone.io";
 
+    private CarboneTemplateClient carboneTemplateClient;
+
+    private CarboneRenderClient carboneRenderClient;
+
+    private CarboneStatusClient carboneStatusClient;
+
     public ICarboneServices create(String token, String version) {
         String apiToken = System.getenv("CARBONE_TOKEN");
+        String apiVersion = "4";
         if( token != "")
         {
             apiToken = token;
         }
-
-        version = "4";
-        var carboneTemplateClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, version)
+        if( version != "")
+        {
+            apiVersion = version;
+        }
+        carboneTemplateClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, apiVersion)
             .encoder(new FormEncoder())
             .decoder(new CarboneDecoder())
             .logger(new Slf4jLogger(CarboneTemplateClient.class))
             .target(CarboneTemplateClient.class, CARBONE_URI + "/template");
 
-        var carboneRenderClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, version)
+        carboneRenderClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, apiVersion)
             .encoder(new GsonEncoder())
             .decoder(new CarboneDecoder())
             .logger(new Slf4jLogger(CarboneRenderClient.class))
             .target(CarboneRenderClient.class, CARBONE_URI + "/render");
 
-        var carboneStatusClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, version)
+        carboneStatusClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, apiVersion)
             .encoder(new GsonEncoder())
             .decoder(new CarboneDecoder())
             .logger(new Slf4jLogger(CarboneStatusClient.class))
@@ -44,5 +53,7 @@ public enum CarboneServicesFactory {
         return new CarboneServices(carboneTemplateClient, carboneRenderClient, carboneStatusClient);
     }
 
-    public static void SetCarbonneUri(String newUrl) {CARBONE_URI = newUrl;}
+    public void SetCarbonneUri(String newUrl) {CARBONE_URI = newUrl;}
+
+    public String GetCarboneUri() {return CARBONE_URI;}
 }

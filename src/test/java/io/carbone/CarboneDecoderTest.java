@@ -1,8 +1,14 @@
 package io.carbone;
 
 import static java.util.Collections.emptyMap;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -25,7 +31,7 @@ public class CarboneDecoderTest {
     }
 
     @Test
-    public void doitDecoderUneCarboneResponse() throws IOException {
+    public void Test_Decoder_Carbone_Response() throws IOException {
         //GIVEN
         CarboneResponse carboneResponse = CarboneResponse.builder()
             .success(true)
@@ -46,7 +52,7 @@ public class CarboneDecoderTest {
     }
 
     @Test
-    public void doitDecoderUneCarboneFileResponse() throws IOException {
+    public void Test_Decoder_Carbone_File_Response() throws IOException {
         //GIVEN
         CarboneFileResponse carboneResponse = new CarboneFileResponse(new byte[]{});
 
@@ -65,7 +71,7 @@ public class CarboneDecoderTest {
     }
 
     @Test
-    public void doitDecoderUneCarboneDocument() throws IOException {
+    public void Test_Decoder_Carbone_Document() throws IOException {
         //GIVEN
         CarboneDocument carboneResponse = new CarboneDocument(new byte[]{}, new String());
 
@@ -76,10 +82,48 @@ public class CarboneDecoderTest {
 
 
         // WHEN
-        Object decodedObj = carboneDecoder.decode(feignResponse, CarboneFileResponse.class);
+        Object decodedObj = carboneDecoder.decode(feignResponse, CarboneDocument.class);
 
         // THEN
         Assertions.assertThat(decodedObj)
-            .isInstanceOf(CarboneFileResponse.class);
+            .isInstanceOf(CarboneDocument.class);
+    }
+
+    @Test
+    public void Test_Decode_Content_Disposition(){
+        String resposne = "";
+        Map<String, Collection<String>> headers = new HashMap<>();
+
+        headers.put("access-control-allow-origin", Arrays.asList("*"));
+        headers.put("access-control-expose-headers", Arrays.asList("X-Request-URL", "Content-Disposition"));
+        headers.put("content-disposition", Arrays.asList("filename=\"report.pdf\""));
+        headers.put("content-type", Arrays.asList("application/pdf"));
+        headers.put("date", Arrays.asList("Tue, 18 Jun 2024 08:28:34 GMT"));
+        headers.put("keep-alive", Arrays.asList("timeout=5"));
+        headers.put("strict-transport-security", Arrays.asList("max-age=63072000"));
+        headers.put("transfer-encoding", Arrays.asList("chunked"));
+        headers.put("x-request-url", Arrays.asList("/render/MTAuMjAuMjEuNDEgICAg9FYGg17kxU3kclCwTqv6iQcmVwb3J0.pdf"));
+        resposne = carboneDecoder.DecodeContentDisposition(headers);
+
+        assertEquals(resposne, "report.pdf");
+    }
+
+    @Test
+    public void Test_Decode_Content_Disposition_Not_Egal_At_2(){
+        String resposne = "";
+        Map<String, Collection<String>> headers = new HashMap<>();
+
+        headers.put("access-control-allow-origin", Arrays.asList("*"));
+        headers.put("access-control-expose-headers", Arrays.asList("X-Request-URL", "Content-Disposition"));
+        headers.put("content-disposition", Arrays.asList("filename\"report\""));
+        headers.put("content-type", Arrays.asList("application/pdf"));
+        headers.put("date", Arrays.asList("Tue, 18 Jun 2024 08:28:34 GMT"));
+        headers.put("keep-alive", Arrays.asList("timeout=5"));
+        headers.put("strict-transport-security", Arrays.asList("max-age=63072000"));
+        headers.put("transfer-encoding", Arrays.asList("chunked"));
+        headers.put("x-request-url", Arrays.asList("/render/MTAuMjAuMjEuNDEgICAg9FYGg17kxU3kclCwTqv6iQcmVwb3J0.pdf"));
+        resposne = carboneDecoder.DecodeContentDisposition(headers);
+
+        assertNull(resposne);
     }
 }

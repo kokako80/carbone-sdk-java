@@ -118,14 +118,16 @@ System.out.println(templateId.get())
 **Definition**
 
 ```java
-def void deleteTemplate(String templateId)
+def boolean deleteTemplate(String templateId)
 ```
 **Example**
 ```java
 
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
 
-carboneServices.deleteTemplate(templateId.get());
+boolean bool = carboneServices.deleteTemplate(templateId.get());
+
+System.out.println(bool)
 ```
 ### generate_template_Id
 **Definition**
@@ -153,9 +155,12 @@ It sets the Carbone access token.
 **Example**
 ```java
 
+CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCARBONEURI("NEW_CARBONE_RENDER_API_ACCESS_TOKEN");
+
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
 
-carboneService.SetCARBONEURI("NEW_CARBONE_RENDER_API_ACCESS_TOKEN");
+System.out.println(CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.GetCARBONEURI())
+
 ```
 ### get_status
 **Definition**
