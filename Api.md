@@ -19,7 +19,7 @@ Try the following code to render a report in 10 seconds. Just replace your API k
 ```java
     ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
     String json = "{ \"data\": { \"firstname\": \"John\", \"lastname\": \"wick\"}";
-    CarboneDocument documentRender = carboneServices.render("Use/your/local/path", json)
+    CarboneDocument documentRender = carboneServices.render(json ,"Use/your/local/path")
     try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
             outputStream.write(ducumentRender.getFileContent());
         }
@@ -48,7 +48,7 @@ String token = "ACCESS-TOKEN";
 # Carbone access token passed as environment variable "CARBONE_TOKEN"
 String token = "";
 
-# Carbone the last version of the api is put automatically at the last version
+# Carbone if you pass a empty string the fourth is automatically apply
 String version = "";
 ```
 Constructor to create a new instance of CarboneSDK.
@@ -62,10 +62,7 @@ def String renderReport(Object renderData, String templateId)
 ```
 The render function takes `templateID` a template ID, `renderData` a stringified JSON.
 
-It returns the report as a `bytes` and a unique report name as a `string`. Carbone engine deletes files that have not been used for a while. By using this method, if your file has been deleted, the SDK will automatically upload it again and return you the result.
-
-When a **template ID** is passed as an argument, the function renders with [render_report](#render_report) then call [get_report](#get_report) to return the report. If the template ID does not exist, an error is returned.
-
+It return a `renderId`, you can pass this `renderId` at [get_report](#get_report) for download the document.
 
 **Example**
 
@@ -84,6 +81,7 @@ System.out.println(renderId)
 ```java
 def CarboneDocument getReport(String renderId)
 ```
+It returns the report as a `bytes` and a unique report name as a `string`. Carbone engine deletes files that have not been used for a while. By using this method, if your file has been deleted, the SDK will automatically upload it again and return you the result.
 
 **Example**
 
@@ -91,6 +89,10 @@ def CarboneDocument getReport(String renderId)
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
 
 CarboneDocument renderDocument = carboneServices.getReport(renderId);
+
+try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+        outputStream.write(renderDocument.getFileContent());
+    }
 
 System.out.println(renderDocument.getFileContent())
 System.out.println(renderDocument.name())
@@ -198,4 +200,14 @@ mvn package
 
 ````
 mvn install:install-file -Dfile=/your/local/project  -DgroupId= io.carbone -DartifactId=CarboneSDK -Dversion= x.x.x  -Dpackaging=jar
+```
+
+- in the pom.xml
+
+```
+<dependency>
+    <groupId>io.carbone</groupId>
+    <artifactId>CarboneSDK</artifactId>
+    <version>x.x.x</version>
+</dependency>
 ```
