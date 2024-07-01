@@ -6,11 +6,11 @@
 
     <groupId>io.carbone</groupId>
     <artifactId>carbone-sdk-java</artifactId>
-    <version>1.0.0-RC1</version>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
     <name>Carbone.io java SDK</name>
-    <description>A java implementation of the api from Carbone.io done by Tennaxia development team</description>
+    <description>Generate documents with Carbone, using templates and JSON data-set. Create invoices, reports, certificates, contracts, financial statements, documents like Word files, Excel sheets, CSVs, PowerPoint slides, and more.</description>
     <url>https://carbone.io/</url>
 
     <licenses>
@@ -19,11 +19,6 @@
             <url>http://www.opensource.org/licenses/mit-license.php</url>
         </license>
     </licenses>
-    <scm>
-        <connection>scm:git:git://github.com/Tennaxia/CarbonIO-JAVA-SDK.git</connection>
-        <developerConnection>scm:git:ssh://github.com/Tennaxia/CarbonIO-JAVA-SDK.git</developerConnection>
-        <url>http://github.com/Tennaxia/CarbonIO-JAVA-SDK/tree/master</url>
-    </scm>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
