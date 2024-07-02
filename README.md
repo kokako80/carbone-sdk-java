@@ -44,18 +44,32 @@ Try the following code to render a report in 10 seconds. Just replace your API k
 ### CarboneSDK Constructor
 **Definition**
 ```java
-
-# Carbone access token passed as parameter
-String token = "ACCESS-TOKEN";
-# Carbone access token passed as environment variable "CARBONE_TOKEN"
-String token = "";
-
-# Carbone if you pass a empty string the fourth is automatically apply
-String version = "";
+def CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(String... apiAccess);
 ```
+**Example**
+
 Constructor to create a new instance of CarboneSDK.
 The access token can be pass as an argument or by the environment variable "CARBONE_TOKEN".
 Get your API key on your Carbone account: https://account.carbone.io/.
+
+```java
+
+# Carbone access token passed as parameter
+String token = "ACCESS-TOKEN";
+String version = "Last_version";
+
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(token, version);
+
+// if you not add version, the version fouth is automatically apply
+String token = "ACCESS-TOKEN";
+
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(token);
+
+//if you get the on-premise
+
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create();
+```
+
 
 ### render_report
 **Definition**
@@ -107,7 +121,12 @@ System.out.println(renderDocument.getName())
 ### add_template
 **Definition**
 ```java
-def Optional<String> addTemplate(byte[] templateFile)
+def Optional addTemplate(byte[] templateFile)
+```
+or
+
+```java
+def Optional addTemplate(String templatePath)
 ```
 Add the template to the API and returns the response (that contains a `template_id`).
 
@@ -116,8 +135,29 @@ Add the template to the API and returns the response (that contains a `template_
 ```java
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
 
+String templatePath = "Use/your/local/path";
+Path filPath = Paths.get(filename);
+byte[] templateFile = Files.readAllBytes(filePath);
+
 try{
-    String templateId = carboneServices.addTemplate(Files.readAllBytes(testFilePath));
+    String templateId = carboneServices.addTemplate(Files.readAllBytes(templateFile));
+}
+catch(CarboneException e)
+{
+    e.printStackTrace();
+}
+
+System.out.println(templateId);
+```
+
+or 
+
+```java
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+
+String templatePath = "Use/your/local/path";
+try{
+    String templateId = carboneServices.addTemplate(templatePath);
 }
 catch(CarboneException e)
 {
@@ -221,7 +261,7 @@ catch(Exception e)
     e.printStackTrace();
 }
 catch (IOException e) {
-    
+
     e.printStackTrace();
 }
 
@@ -245,7 +285,7 @@ mvn package
 
 - in other terminal 
 
-```` maven
+``` maven
 mvn install:install-file -Dfile=/your/local/project  -DgroupId= io.carbone -DartifactId=CarboneSDK -Dversion= x.x.x  -Dpackaging=jar
 
 ```
