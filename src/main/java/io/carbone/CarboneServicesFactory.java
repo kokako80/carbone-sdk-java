@@ -16,15 +16,15 @@ public enum CarboneServicesFactory {
 
     private CarboneStatusClient carboneStatusClient;
 
-    public ICarboneServices create(String ... apiAcess) {
+    public ICarboneServices create(String ... config) {
         String apiToken = System.getenv("CARBONE_TOKEN");
         String apiVersion = "4";
-        if (apiAcess.length > 0 && !apiAcess[0].isEmpty()) {
-            apiToken = apiAcess[0];
+        if (config.length > 0 && !config[0].isEmpty()) {
+            apiToken = config[0];
         }
         
-        if (apiAcess.length > 1 && !apiAcess[1].isEmpty()) {
-            apiVersion = apiAcess[1];
+        if (config.length > 1 && !config[1].isEmpty()) {
+            apiVersion = config[1];
         }
         carboneTemplateClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, apiVersion)
             .encoder(new FormEncoder())

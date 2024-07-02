@@ -19,7 +19,13 @@ Try the following code to render a report in 10 seconds. Just replace your API k
 ```java
     ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
     String json = "{ \"data\": { \"id\": \"AF128\",\"firstname\": \"John\", \"lastname\": \"wick\"}, \"reportName\": \"invoice-{d.id}\",\"convertTo\": \"pdf\"}";
-    CarboneDocument render = carboneServices.render(json ,"Use/your/local/path")
+    try{
+        CarboneDocument render = carboneServices.render(json ,"Use/your/local/path");
+    }
+    catch(CarboneException e)
+    {
+        System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
+    }
     try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
             outputStream.write(render.getFileContent());
         }
@@ -44,7 +50,7 @@ Try the following code to render a report in 10 seconds. Just replace your API k
 ### CarboneSDK Constructor
 **Definition**
 ```java
-def CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(String... apiAccess);
+def CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(String... config);
 ```
 **Example**
 
@@ -67,7 +73,10 @@ ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTO
 
 //if you get the on-premise
 
+CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarboneUrl("NEW_CARBONE_RENDER_API_ACCESS_TOKEN");
+
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create();
+
 ```
 
 
@@ -85,10 +94,16 @@ It return a `renderId`, you can pass this `renderId` at [get_report](#get_report
 ```java
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
 
-String json = "{ \"data\": { \"firstname\": \"John\", \"lastname\": \"wick\"}";
-String renderId = carboneServices.renderReport(jsonObj, "Use/your/local/path");
+    String json = "{ \"data\": { \"id\": \"AF128\",\"firstname\": \"John\", \"lastname\": \"wick\"}, \"reportName\": \"invoice-{d.id}\",\"convertTo\": \"pdf\"}";
+try{
+    String renderId = carboneServices.renderReport(jsonObj, "Use/your/local/path");
+}
+catch(CarboneException e)
+{
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
+}
 
-System.out.println(renderId)
+System.out.println(renderId);
 ```
 
 ### get_report
@@ -107,7 +122,7 @@ try{
 }
 catch(CarboneException e)
 {
-    e.printStackTrace();
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
 }
 
 try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
@@ -144,7 +159,7 @@ try{
 }
 catch(CarboneException e)
 {
-    e.printStackTrace();
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
 }
 
 System.out.println(templateId);
@@ -161,7 +176,7 @@ try{
 }
 catch(CarboneException e)
 {
-    e.printStackTrace();
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
 }
 
 System.out.println(templateId);
@@ -183,7 +198,7 @@ try{
 }
 catch(CarboneException e)
 {
-    e.printStackTrace();
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
 }
 
 System.out.println(bool);
@@ -230,9 +245,9 @@ It sets the Carbone access token.
 try{
     CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarboneUrl("NEW_CARBONE_RENDER_API_ACCESS_TOKEN");
 }
-catch(Exception e)
+catch(CarboneException e)
 {
-    e.printStackTrace();
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
 }
 
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
@@ -255,6 +270,10 @@ ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTO
 
 try{
     String status = carboneServices.getStatus();
+}
+catch(Exception e)
+{
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
 }
 catch(Exception e)
 {
@@ -300,3 +319,32 @@ mvn install:install-file -Dfile=/your/local/project  -DgroupId= io.carbone -Dart
 </dependency>
 
 ```
+
+For compiling and testing the SDK in another Java Project: 
+```mvn 
+
+clean compile && mvn exec:java -Dexec.mainClass="local.test.CarboneCloudSdkJava
+
+```
+
+For launch test unitaire
+
+```mvn
+
+mvn test
+
+````
+
+For the coverage
+
+```mvn
+
+mvn clean test jacoco:report  
+
+```
+
+- go to the folder of the project 
+
+- open target / site / jacoco
+
+- open file index.html
