@@ -8,7 +8,7 @@ public enum CarboneServicesFactory {
 
     CARBONE_SERVICES_FACTORY_INSTANCE;
 
-    private static String CARBONE_URI = "https://api.carbone.io";
+    private static String CARBONE_URL = "https://api.carbone.io";
 
     private CarboneTemplateClient carboneTemplateClient;
 
@@ -16,34 +16,33 @@ public enum CarboneServicesFactory {
 
     private CarboneStatusClient carboneStatusClient;
 
-    public ICarboneServices create(String token, String version) {
+    public ICarboneServices create(String ... apiAcess) {
         String apiToken = System.getenv("CARBONE_TOKEN");
         String apiVersion = "4";
-        if( token != "")
-        {
-            apiToken = token;
+        if (apiAcess.length > 0 && !apiAcess[0].isEmpty()) {
+            apiToken = apiAcess[0];
         }
-        if( version != "")
-        {
-            apiVersion = version;
+        
+        if (apiAcess.length > 1 && !apiAcess[1].isEmpty()) {
+            apiVersion = apiAcess[1];
         }
         carboneTemplateClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, apiVersion)
             .encoder(new FormEncoder())
             .decoder(new CarboneDecoder())
             .logger(new Slf4jLogger(CarboneTemplateClient.class))
-            .target(CarboneTemplateClient.class, CARBONE_URI + "/template");
+            .target(CarboneTemplateClient.class, CARBONE_URL + "/template");
 
         carboneRenderClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, apiVersion)
             .encoder(new GsonEncoder())
             .decoder(new CarboneDecoder())
             .logger(new Slf4jLogger(CarboneRenderClient.class))
-            .target(CarboneRenderClient.class, CARBONE_URI + "/render");
+            .target(CarboneRenderClient.class, CARBONE_URL + "/render");
 
         carboneStatusClient = CarboneFeignClientBuilder.createCarboneFeignClient(apiToken, apiVersion)
             .encoder(new GsonEncoder())
             .decoder(new CarboneDecoder())
             .logger(new Slf4jLogger(CarboneStatusClient.class))
-            .target(CarboneStatusClient.class, CARBONE_URI);
+            .target(CarboneStatusClient.class, CARBONE_URL);
 
         return create(carboneTemplateClient, carboneRenderClient, carboneStatusClient);
     }
@@ -53,7 +52,7 @@ public enum CarboneServicesFactory {
         return new CarboneServices(carboneTemplateClient, carboneRenderClient, carboneStatusClient);
     }
 
-    public void SetCarbonneUri(String newUrl) {CARBONE_URI = newUrl;}
+    public void SetCarboneUrl(String newUrl) throws CarboneException {CARBONE_URL = newUrl;}
 
-    public String GetCarboneUri() {return CARBONE_URI;}
+    public String GetCarboneUrl() {return CARBONE_URL;}
 }

@@ -1,5 +1,6 @@
 package io.carbone;
 
+import java.io.IOException;
 import java.util.Optional;
 
 public interface ICarboneServices {
@@ -10,7 +11,9 @@ public interface ICarboneServices {
      * @return an {@link Optional} containing the templateId to use for render if template is successfully sent
      * @throws CarboneException contain CarboneResponse format with API error code and error messages
      */
-    Optional<String> addTemplate(byte[] templateFile) throws CarboneException;
+    String addTemplate(byte[] templateFile) throws CarboneException;
+
+    String addTemplate(String templatePath) throws CarboneException, IOException;
 
     /**
      * Delete uploaded template

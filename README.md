@@ -18,11 +18,13 @@ Try the following code to render a report in 10 seconds. Just replace your API k
 
 ```java
     ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
-    String json = "{ \"data\": { \"firstname\": \"John\", \"lastname\": \"wick\"}";
-    CarboneDocument documentRender = carboneServices.render(json ,"Use/your/local/path")
+    String json = "{ \"data\": { \"id\": \"AF128\",\"firstname\": \"John\", \"lastname\": \"wick\"}, \"reportName\": \"invoice-{d.id}\",\"convertTo\": \"pdf\"}";
+    CarboneDocument render = carboneServices.render(json ,"Use/your/local/path")
     try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
-            outputStream.write(ducumentRender.getFileContent());
+            outputStream.write(render.getFileContent());
         }
+    // Get the name of the document with the `getName()`. For instance the name of the document, based on the JSON, is: "invoice-AF128.pdf"
+    System.out.println(renderDocument.getName())
 ```
 
 ## Java SDK API
@@ -86,15 +88,19 @@ It returns the report as a `bytes` and a unique report name as a `string`. Carbo
 
 ```java
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
-
-CarboneDocument renderDocument = carboneServices.getReport(renderId);
+try{
+    CarboneDocument renderDocument = carboneServices.getReport(renderId);
+}
+catch(CarboneException e)
+{
+    e.printStackTrace();
+}
 
 try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
         outputStream.write(renderDocument.getFileContent());
     }
-
-System.out.println(renderDocument.getFileContent())
-System.out.println(renderDocument.name())
+// Get the name of the document with the `getName()`.
+System.out.println(renderDocument.getName())
 ```
 
 
@@ -110,9 +116,15 @@ Add the template to the API and returns the response (that contains a `template_
 ```java
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
 
-Optional<String> templateId = carboneServices.addTemplate(Files.readAllBytes(testFilePath));
+try{
+    String templateId = carboneServices.addTemplate(Files.readAllBytes(testFilePath));
+}
+catch(CarboneException e)
+{
+    e.printStackTrace();
+}
 
-System.out.println(templateId.get())
+System.out.println(templateId);
 ```
 
 ### delete_template
@@ -126,9 +138,15 @@ def boolean deleteTemplate(String templateId)
 
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
 
-boolean bool = carboneServices.deleteTemplate(templateId.get());
+try{
+    boolean bool = carboneServices.deleteTemplate(templateId.get());
+}
+catch(CarboneException e)
+{
+    e.printStackTrace();
+}
 
-System.out.println(bool)
+System.out.println(bool);
 ```
 ### generate_template_Id
 **Definition**
@@ -142,25 +160,45 @@ ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTO
 
 String path = "Use/your/local/path";
 String newTemplateId = generateTemplateId(path);
+try{
+    String newTemplateId = generateTemplateId(path);
+}
+catch(Exception e)
+{
+    e.printStackTrace();
+}
+catch (NoSuchAlgorithmException e) {
+    e.printStackTrace();
+}
+catch (IOException e) {
+    e.printStackTrace();
+}
 
-System.out.println(newTemplateId)
+System.out.println(newTemplateId);
 ```
 
 ### set_access_URI
 **Definition**
 ```java
-def void SetCARBONEURI(String newCARBONE_URI)
+def void SetCarboneUrl(String newCARBONE_URL)
 ```
 It sets the Carbone access token.
 
 **Example**
 ```java
 
-CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCARBONEURI("NEW_CARBONE_RENDER_API_ACCESS_TOKEN");
+try{
+    CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarboneUrl("NEW_CARBONE_RENDER_API_ACCESS_TOKEN");
+}
+catch(Exception e)
+{
+    e.printStackTrace();
+}
 
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
 
-System.out.println(CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.GetCARBONEURI())
+
+System.out.println(CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.GetCarboneUrl());
 
 ```
 ### get_status
@@ -175,9 +213,19 @@ def getStatus()
 
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
 
-String status = carboneServices.getStatus()
+try{
+    String status = carboneServices.getStatus();
+}
+catch(Exception e)
+{
+    e.printStackTrace();
+}
+catch (IOException e) {
+    
+    e.printStackTrace();
+}
 
-System.out.println(status)
+System.out.println(status);
 
 ```
 
@@ -197,8 +245,9 @@ mvn package
 
 - in other terminal 
 
-````
+```` maven
 mvn install:install-file -Dfile=/your/local/project  -DgroupId= io.carbone -DartifactId=CarboneSDK -Dversion= x.x.x  -Dpackaging=jar
+
 ```
 
 - in the pom.xml
@@ -209,4 +258,5 @@ mvn install:install-file -Dfile=/your/local/project  -DgroupId= io.carbone -Dart
     <artifactId>CarboneSDK</artifactId>
     <version>x.x.x</version>
 </dependency>
+
 ```

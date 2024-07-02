@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 
 import org.junit.Test;
@@ -38,7 +37,29 @@ public class CarboneTest {
     String directory = System.getProperty("user.dir");
 
     @Test
-    public void Test_Add_Template() throws CarboneException, IOException, InterruptedException {
+    public void Test_Add_Template_With_Path() throws CarboneException, IOException, InterruptedException {
+
+        CarboneResponse.CarboneResponseData responseData = CarboneResponse.CarboneResponseData.builder()
+                                                                                            .templateId("fb9241ea2218ffd8f974110e539386384620244618c2efbf182b7bd47242987B")
+                                                                                            .build();
+        CarboneResponse mockedResponse = CarboneResponse.builder()
+                                                        .success(true)
+                                                        .data(responseData)
+                                                        .build();
+        String filename = "/src/test/java/io/carbone/template3.odt";
+        String file = directory + filename;
+        Path filePath = Paths.get(directory, filename);
+        byte[] fileBytes = Files.readAllBytes(filePath);
+
+        when(carboneTemplate.addTemplate(fileBytes)).thenReturn(mockedResponse);
+            
+        String resp =  carboneServices.addTemplate(file);
+        assertEquals(resp, mockedResponse.getData().templateId);
+
+    }
+
+    @Test
+    public void Test_Add_Template_With_Array_Byte() throws CarboneException, IOException, InterruptedException {
 
         CarboneResponse.CarboneResponseData responseData = CarboneResponse.CarboneResponseData.builder()
                                                                                             .templateId("fb9241ea2218ffd8f974110e539386384620244618c2efbf182b7bd47242987B")
@@ -53,8 +74,8 @@ public class CarboneTest {
 
         when(carboneTemplate.addTemplate(fileBytes)).thenReturn(mockedResponse);
             
-        Optional<String> resp =  carboneServices.addTemplate(Files.readAllBytes(filePath));
-        assertEquals(resp.get(), mockedResponse.getData().templateId);
+        String resp =  carboneServices.addTemplate(Files.readAllBytes(filePath));
+        assertEquals(resp, mockedResponse.getData().templateId);
 
     }
 
@@ -442,11 +463,11 @@ public class CarboneTest {
     }
 
     @Test 
-    public void Test_Set_Carbon_Uri(){
+    public void Test_Set_Carbon_Uri() throws CarboneException{
 
-        CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarbonneUri(directory);
+        CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarboneUrl(directory);
 
-        assertEquals(CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.GetCarboneUri(), directory);
+        assertEquals(CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.GetCarboneUrl(), directory);
     }
 
     @Test
@@ -458,7 +479,7 @@ public class CarboneTest {
 
     @Test
     public void Test_Carbon_Service_Fectory_With_No_Argument() throws CarboneException{
-        ICarboneServices carboneService = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("", "");
+        ICarboneServices carboneService = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("");
         String status = carboneService.getStatus();
         assertEquals(status, "{\"success\":true,\"code\":200,\"message\":\"OK\",\"version\":\"4.22.9\"}" );
     }

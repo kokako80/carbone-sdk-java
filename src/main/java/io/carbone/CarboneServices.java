@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 
 import feign.FeignException;
 import feign.Response;
@@ -31,9 +30,16 @@ class CarboneServices implements ICarboneServices {
     }
 
     @Override
-    public Optional<String> addTemplate(byte[] templateFile) throws CarboneException {
+    public String addTemplate(String templatePath) throws CarboneException, IOException {
+        Path filePath = Paths.get(templatePath);
+        byte[] fileBytes = Files.readAllBytes(filePath);
+        return addTemplate(fileBytes);
+    }
+
+    @Override
+    public String addTemplate(byte[] templateFile) throws CarboneException {
         CarboneResponse carboneResponse = carboneTemplateClient.addTemplate(templateFile);
-        return Optional.of(carboneResponse.getData().getTemplateId());
+        return carboneResponse.getData().getTemplateId();
     }
 
     @Override
@@ -80,7 +86,6 @@ class CarboneServices implements ICarboneServices {
             return null;
         }
     }
-
     public CarboneDocument render(String Json, String fileOrTemplateID) throws CarboneException
     {
         if (fileOrTemplateID.isEmpty()) {
