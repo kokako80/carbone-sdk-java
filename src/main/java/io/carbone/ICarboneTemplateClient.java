@@ -1,4 +1,4 @@
-package com.tennaxia.carbone;
+package io.carbone;
 
 import feign.Headers;
 import feign.Param;
@@ -11,4 +11,7 @@ public interface ICarboneTemplateClient {
 
     @RequestLine("DELETE /{templateId}")
     CarboneResponse deleteTemplate(@Param("templateId") String templateId) throws CarboneException;
+
+    @RequestLine("GET /{templateId}")
+    CarboneFileResponse getTemplate(@Param("templateId") String templateId) throws CarboneException;
 }

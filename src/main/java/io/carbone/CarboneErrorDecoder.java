@@ -1,4 +1,4 @@
-package com.tennaxia.carbone;
+package io.carbone;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

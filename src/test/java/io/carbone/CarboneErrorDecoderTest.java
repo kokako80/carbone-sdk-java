@@ -1,4 +1,4 @@
-package com.tennaxia.carbone;
+package io.carbone;
 
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +30,7 @@ public class CarboneErrorDecoderTest {
     }
 
     @Test
-    public void doitRetournerCarboneExceptionErreurRequete() throws JsonProcessingException {
+    public void Return_Carbone_Exception_Error_Request() throws JsonProcessingException {
         // GIVEN
         Response feignResponse = Response.builder()
             .request(request)

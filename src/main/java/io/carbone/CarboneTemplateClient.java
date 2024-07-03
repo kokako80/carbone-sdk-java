@@ -1,4 +1,4 @@
-package com.tennaxia.carbone;
+package io.carbone;
 
 interface CarboneTemplateClient extends ICarboneTemplateClient {
 

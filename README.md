@@ -1,118 +1,350 @@
-# Carbone Cloud API Java SDK
+# Carbone API Java SDK
 
-Based on API from [Carbone.io](https://carbone.io/api-reference.html)
+The Carbone Java SDK provides a simple interface to communicate with Carbone Cloud API.
 
-## Install
-
-With Maven add this to your project's pom.xml: 
+## Install the Java SDK
 
 ```xml
 <dependency>
-    <groupId>com.tennaxia.carbone</groupId>
-    <artifactId>carbone-sdk-java</artifactId>
-    <version>1.0.0-RC1</version>
+    <groupId>io.carbone</groupId>
+    <artifactId>CarboneSDK</artifactId>
+    <version>1.1.0</version>
 </dependency>
 ```
 
-With Gradle :
+## Quickstart with the Java SDK
 
-```groovy
-implementation 'com.tennaxia.carbone:carbone-sdk-java:1.0.0-RC1'
-```
-
-## Initialize API services
-
-To initialize your services, you need to create an instance of `ICarboneServices` by using `CarboneServicesFactory`, passing your token key product and service's version (current is 4):
+Try the following code to render a report in 10 seconds. Just replace your API key and version, the template you want to render, and the data object. Get your API key on your Carbone account: https://account.carbone.io/.
 
 ```java
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(token, version);
-```
-
-You can also use your own instance of `ICarboneTemplateClient` and `ICarboneRenderClient`
-```java
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(carboneTemplateClient, carboneRenderClient);
-```
-
-## Usage
-
-Now with the instantiated object you can use all carbone.io services:
-
-
-### Upload template
-
-You need to send the template file content in `byte[]`, it will return an `Optional` containing `templateId` if upload is successful.
-
-```java
-Path testFilePath = Paths.get("template_carbone.odt");
-Optional<String> templateId = carboneServices.addTemplate(Files.readAllBytes(testFilePath));
-```
-
-![template](./documentation/template.png)
-
-
-### Render report
-
-You can now render your report with a Json like object (refer to carbone.io documentation for syntax details):
-
-```java
-public class MyJsonObject {
-    String test_key1;
-    String test_key2;
-    MyKeyObj key_object;
-
-    public MyJsonObject(String test_key1, String test_key2, String inner_test_key) {
-        this.test_key1 = test_key1;
-        this.test_key2 = test_key2;
-        this.key_object = new MyKeyObj(inner_test_key);
+    ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+    String json = "{ \"data\": { \"id\": \"AF128\",\"firstname\": \"John\", \"lastname\": \"wick\"}, \"reportName\": \"invoice-{d.id}\",\"convertTo\": \"pdf\"}";
+    try{
+        CarboneDocument render = carboneServices.render(json ,"Use/your/local/path");
     }
-    
-    private static class MyKeyObj {
-        String test_key;
-
-        private MyInnerObj(String test_key) {
-            this.test_key = test_key;
+    catch(CarboneException e)
+    {
+        System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
+    }
+    try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+            outputStream.write(render.getFileContent());
         }
-    }
+    // Get the name of the document with the `getName()`. For instance the name of the document, based on the JSON, is: "invoice-AF128.pdf"
+    System.out.println(renderDocument.getName())
+```
+
+## Java SDK API
+
+### Functions overview
+
+- [CarboneSDK Constructor](#carbonesdk-constructor)
+- [Render function](#render_report)
+- [Get a template](#get_report)
+- [Add a template](#add_template)
+- [Delete a template](#delete_template)
+- [Get a template](#get_template)
+- [Generate a template ID](#generate_template_Id)
+- [Set access token](#set_access_URI)
+- [Get API status](#get_status)
+
+### CarboneSDK Constructor
+**Definition**
+```java
+def CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(String... config);
+```
+**Example**
+
+Constructor to create a new instance of CarboneSDK.
+The access token can be pass as an argument or by the environment variable "CARBONE_TOKEN".
+Get your API key on your Carbone account: https://account.carbone.io/.
+
+```java
+
+# Carbone access token passed as parameter
+String token = "ACCESS-TOKEN";
+String version = "Last_version";
+
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(token, version);
+
+// if you not add version, the version fouth is automatically apply
+String token = "ACCESS-TOKEN";
+
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(token);
+
+//if you get the on-premise
+
+CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarboneUrl("NEW_CARBONE_RENDER_API_ACCESS_TOKEN");
+
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create();
+
+```
+
+
+### render_report
+**Definition**
+```java
+def String renderReport(String renderData, String templateId)
+```
+The render function takes `templateID` a template ID, `renderData` a stringified JSON.
+
+It return a `renderId`, you can pass this `renderId` at [get_report](#get_report) for download the document.
+
+**Example**
+
+```java
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+
+    String json = "{ \"data\": { \"id\": \"AF128\",\"firstname\": \"John\", \"lastname\": \"wick\"}, \"reportName\": \"invoice-{d.id}\",\"convertTo\": \"pdf\"}";
+try{
+    String renderId = carboneServices.renderReport(jsonObj, "Use/your/local/path");
 }
+catch(CarboneException e)
+{
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
+}
+
+System.out.println(renderId);
 ```
 
-then calling render with template id:
-
+### get_report
+**Definition**
 ```java
-MyJsonObject jsonObj = new MyJsonObject("key one", "key two", "key three");
-/**
- *  {
- *      test_key1: "key one",
- *      test_key2: "key two",
- *      key_object: {
- *          test_key: "key three"
- *      }
- **/
-
-String renderId = carboneServices.renderReport(jsonObj, templateId.get());
+def CarboneDocument getReport(String renderId)
 ```
-By default, rendered report will be in PDF and with option `UseLosslessCompression` at false.
-You can also call render with additional option for PDF rendering (see: [PDF export filter options](https://carbone.io/api-reference.html#pdf-export-filter-options)).
-To do so, you need to add a `Map<String, Object>` to method call 
+It returns the report as a `bytes` and a unique report name as a `string`. Carbone engine deletes files that have not been used for a while. By using this method, if your file has been deleted, the SDK will automatically upload it again and return you the result.
+
+**Example**
 
 ```java
-Map<String, Object> additionalOptions = Map.ofEntries(
-    Map.entry("UseLosslessCompression", true),
-    Map.entry("DocumentOpenPassword", "password"),
-    Map.entry("EncryptFile", true)
-    );
-String renderId = carboneServices.renderReport(jsonObj, templateId.get(), additionalOptions);
-```
-
-### Download report
-
-You can now download your report:
-
-```java
-File outputFile = new File("report.pdf");
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+try{
+    CarboneDocument renderDocument = carboneServices.getReport(renderId);
+}
+catch(CarboneException e)
+{
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
+}
 
 try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
-    outputStream.write(carboneServices.getReport(renderId));
-}
+        outputStream.write(renderDocument.getFileContent());
+    }
+// Get the name of the document with the `getName()`.
+System.out.println(renderDocument.getName())
 ```
-![report](./documentation/report.png)
+
+
+### add_template
+**Definition**
+```java
+def Optional addTemplate(byte[] templateFile)
+```
+or
+
+```java
+def Optional addTemplate(String templatePath)
+```
+Add the template to the API and returns the response (that contains a `template_id`).
+
+**Example**
+
+```java
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+
+String templatePath = "Use/your/local/path";
+Path filPath = Paths.get(filename);
+byte[] templateFile = Files.readAllBytes(filePath);
+
+try{
+    String templateId = carboneServices.addTemplate(Files.readAllBytes(templateFile));
+}
+catch(CarboneException e)
+{
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
+}
+
+System.out.println(templateId);
+```
+
+or 
+
+```java
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+
+String templatePath = "Use/your/local/path";
+try{
+    String templateId = carboneServices.addTemplate(templatePath);
+}
+catch(CarboneException e)
+{
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
+}
+
+System.out.println(templateId);
+```
+
+### delete_template
+**Definition**
+
+```java
+def boolean deleteTemplate(String templateId)
+```
+**Example**
+```java
+
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+
+try{
+    boolean bool = carboneServices.deleteTemplate(templateId.get());
+}
+catch(CarboneException e)
+{
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
+}
+
+System.out.println(bool);
+```
+### generate_template_Id
+**Definition**
+```java
+def String generateTemplateId(String path)
+```
+The Template ID is predictable and idempotent, pass the template path and it will return the `template_id`.
+
+```java
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+
+String path = "Use/your/local/path";
+String newTemplateId = generateTemplateId(path);
+try{
+    String newTemplateId = generateTemplateId(path);
+}
+catch(Exception e)
+{
+    e.printStackTrace();
+}
+catch (NoSuchAlgorithmException e) {
+    e.printStackTrace();
+}
+catch (IOException e) {
+    e.printStackTrace();
+}
+
+System.out.println(newTemplateId);
+```
+
+### set_access_URI
+**Definition**
+```java
+def void SetCarboneUrl(String newCARBONE_URL)
+```
+It sets the Carbone access token.
+
+**Example**
+```java
+
+try{
+    CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarboneUrl("NEW_CARBONE_RENDER_API_ACCESS_TOKEN");
+}
+catch(CarboneException e)
+{
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
+}
+
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+
+
+System.out.println(CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.GetCarboneUrl());
+
+```
+### get_status
+**Definition**
+
+```java
+def getStatus()
+```
+
+**Example**
+```java
+
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+
+try{
+    String status = carboneServices.getStatus();
+}
+catch(Exception e)
+{
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
+}
+catch(Exception e)
+{
+    e.printStackTrace();
+}
+catch (IOException e) {
+
+    e.printStackTrace();
+}
+
+System.out.println(status);
+
+```
+
+
+### Build the project
+
+- at the root of the project
+```maven
+
+mvn clean
+
+mvn compile
+
+mvn package
+
+```
+
+- in other terminal 
+
+``` maven
+mvn install:install-file -Dfile=/your/local/project  -DgroupId= io.carbone -DartifactId=CarboneSDK -Dversion= x.x.x  -Dpackaging=jar
+
+```
+
+- in the pom.xml
+
+```
+<dependency>
+    <groupId>io.carbone</groupId>
+    <artifactId>CarboneSDK</artifactId>
+    <version>x.x.x</version>
+</dependency>
+
+```
+
+For compiling and testing the SDK in another Java Project: 
+```mvn 
+
+clean compile && mvn exec:java -Dexec.mainClass="local.test.CarboneCloudSdkJava
+
+```
+
+For launch test unitaire
+
+```mvn
+
+mvn test
+
+````
+
+For the coverage
+
+```mvn
+
+mvn clean test jacoco:report  
+
+```
+
+- go to the folder of the project 
+
+- open target / site / jacoco
+
+- open file index.html

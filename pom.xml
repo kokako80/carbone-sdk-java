@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.tennaxia.carbone</groupId>
-    <artifactId>carbone-sdk-java</artifactId>
-    <version>1.0.0-RC1</version>
+    <groupId>io.carbone</groupId>
+    <artifactId>carbone-sdk</artifactId>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
     <name>Carbone.io java SDK</name>
-    <description>A java implementation of the api from Carbone.io done by Tennaxia development team</description>
+    <description>Generate documents with Carbone, using templates and JSON data-set. Create invoices, reports, certificates, contracts, financial statements, documents like Word files, Excel sheets, CSVs, PowerPoint slides, and more.</description>
     <url>https://carbone.io/</url>
 
     <licenses>
@@ -19,21 +19,6 @@
             <url>http://www.opensource.org/licenses/mit-license.php</url>
         </license>
     </licenses>
-
-    <developers>
-        <developer>
-            <name>Benjamin COLOMBE</name>
-            <email>bcolombe@tennaxia.com</email>
-            <organization>Tennaxia</organization>
-            <organizationUrl>https://www.tennaxia.com/</organizationUrl>
-        </developer>
-    </developers>
-
-    <scm>
-        <connection>scm:git:git://github.com/Tennaxia/CarbonIO-JAVA-SDK.git</connection>
-        <developerConnection>scm:git:ssh://github.com/Tennaxia/CarbonIO-JAVA-SDK.git</developerConnection>
-        <url>http://github.com/Tennaxia/CarbonIO-JAVA-SDK/tree/master</url>
-    </scm>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -47,7 +32,7 @@
     </properties>
 
     <build>
-        <finalName>api-carbone</finalName>
+        <finalName>carbone-sdk</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -84,6 +69,25 @@
                     <!-- ne genere pas les javadocs -->
                 </configuration>
             </plugin>
+             <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.7</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -97,9 +101,9 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
+            <version>1.18.32</version>
         </dependency>
-
+        
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-okhttp</artifactId>
@@ -119,16 +123,44 @@
         </dependency>
 
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.36</version>
+        </dependency>
+
+        <dependency>
             <groupId>io.github.openfeign.form</groupId>
             <artifactId>feign-form</artifactId>
             <version>${feign.form.version}</version>
         </dependency>
+        <dependency>   
+        
+        <groupId>io.github.openfeign</groupId>   
+        <artifactId>feign-core</artifactId> 
+            <version>11.9</version> 
+            </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20210307</version>
+        </dependency>
+        
+        <dependency>
+        <groupId>io.github.openfeign</groupId>
+        <artifactId>feign-jackson</artifactId>
+        <version>11.7</version>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.13.4</version>
+    </dependency>
 
         <!--  test   -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junitVersion}</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -152,6 +184,13 @@
             <version>4.1.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>4.2.0</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>
