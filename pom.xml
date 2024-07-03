@@ -9,7 +9,7 @@
     <version>2.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Carbone.io java SDK</name>
+    <name>Carbone.io SDK</name>
     <description>Generate documents with Carbone, using templates and JSON data-set. Create invoices, reports, certificates, contracts, financial statements, documents like Word files, Excel sheets, CSVs, PowerPoint slides, and more.</description>
     <url>https://carbone.io/</url>
 
