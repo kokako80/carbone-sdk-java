@@ -35,52 +35,50 @@ Try the following code to render a report in 10 seconds. Just replace your API k
 
 ## Java SDK API
 
-### Functions overview
+### Table of content
 
-- [CarboneSDK Constructor](#carbonesdk-constructor)
-- [Render function](#render_report)
-- [Get a template](#get_report)
-- [Add a template](#add_template)
-- [Delete a template](#delete_template)
-- [Get a template](#get_template)
-- [Generate a template ID](#generate_template_Id)
-- [Set access token](#set_access_URI)
-- [Get API status](#get_status)
+- SDK functions:
+    - [CarboneSDK Constructor](#carbone-sdk-constructor)
+    - [Render function](#generate-document)
+    - [Get a template](#download-document)
+    - [Add a template](#add-template)
+    - [Delete a template](#delete-template)
+    - [Get a template](#get-template)
+    - [Set Carbone URL](#set-carbone-url)
+    - [Get API status](#get-api-status)
+    - [Generate a template ID](#generate-template-Id)
+- [Build commands](#build-commands)
+- [Test commands](#test-commands)
 
-### CarboneSDK Constructor
+### Carbone SDK Constructor
 **Definition**
 ```java
 def CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(String... config);
 ```
-**Example**
 
-Constructor to create a new instance of CarboneSDK.
-The access token can be pass as an argument or by the environment variable "CARBONE_TOKEN".
+**Example of SDK config for Carbone Cloud**
+
+Constructor to create a new instance of the Carbone SDK.
 Get your API key on your Carbone account: https://account.carbone.io/.
-
 ```java
-
-# Carbone access token passed as parameter
-String token = "ACCESS-TOKEN";
-String version = "Last_version";
-
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(token, version);
-
-// if you not add version, the version fouth is automatically apply
-String token = "ACCESS-TOKEN";
-
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(token);
-
-//if you get the on-premise
-
-CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarboneUrl("NEW_CARBONE_RENDER_API_ACCESS_TOKEN");
-
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create();
-
+// For Carbone Cloud, provide your API Access Token as first argument:
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("CARBONE_API_TOKEN");
+// You can specify which version of Carbone CLoud API you want to request as second argument, by default the version is "4":
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("CARBONE_API_TOKEN", "4");
+// You can define the API Token as Environment Variable under the "CARBONE_API_TOKEN", then you can leave the create function empty:
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("");
 ```
 
+**Example of SDK config for Carbone On-premise**
+```java
+// For Carbone On-premise, define the URL of your Carbone Server:
+CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarboneUrl("NEW_CARBONE_RENDER_API_ACCESS_TOKEN");
+// Then get a new instance by providing an empty string to the "create" function:
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("");
+```
 
-### render_report
+### Generate Document
+
 **Definition**
 ```java
 def String renderReport(String renderData, String templateId)
@@ -106,7 +104,8 @@ catch(CarboneException e)
 System.out.println(renderId);
 ```
 
-### get_report
+### Download document
+
 **Definition**
 ```java
 def CarboneDocument getReport(String renderId)
@@ -133,7 +132,7 @@ System.out.println(renderDocument.getName())
 ```
 
 
-### add_template
+### Add Template
 **Definition**
 ```java
 def Optional addTemplate(byte[] templateFile)
@@ -182,7 +181,7 @@ catch(CarboneException e)
 System.out.println(templateId);
 ```
 
-### delete_template
+### Delete Template
 **Definition**
 
 ```java
@@ -203,7 +202,8 @@ catch(CarboneException e)
 
 System.out.println(bool);
 ```
-### generate_template_Id
+
+### Generate Template Id
 **Definition**
 ```java
 def String generateTemplateId(String path)
@@ -232,7 +232,7 @@ catch (IOException e) {
 System.out.println(newTemplateId);
 ```
 
-### set_access_URI
+### Set Carbone Url
 **Definition**
 ```java
 def void SetCarboneUrl(String newCARBONE_URL)
@@ -256,7 +256,7 @@ ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTO
 System.out.println(CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.GetCarboneUrl());
 
 ```
-### get_status
+### Get API Status
 **Definition**
 
 ```java
@@ -271,7 +271,7 @@ ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTO
 try{
     String status = carboneServices.getStatus();
 }
-catch(Exception e)
+catch(CarboneException e)
 {
     System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
 }
@@ -289,62 +289,39 @@ System.out.println(status);
 ```
 
 
-### Build the project
+### Build commands
 
-- at the root of the project
-```maven
-
-mvn clean
-
-mvn compile
-
-mvn package
-
+At the root of the SDK repository run:
+```sh
+mvn clean && mvn compile && mvn package
+```
+Then you can create a local build of the SDK:
+``` sh
+mvn install:install-file -Dfile=/your/local/file.jar  -DgroupId=io.carbone -DartifactId=CarboneSDK -Dversion=x.x.x  -Dpackaging=jar
 ```
 
-- in other terminal 
-
-``` maven
-mvn install:install-file -Dfile=/your/local/project  -DgroupId= io.carbone -DartifactId=CarboneSDK -Dversion= x.x.x  -Dpackaging=jar
-
-```
-
-- in the pom.xml
-
-```
+In another Java project, you can load the local build of the SDK, in the pom.xml:
+```xml
 <dependency>
     <groupId>io.carbone</groupId>
     <artifactId>CarboneSDK</artifactId>
     <version>x.x.x</version>
 </dependency>
-
 ```
-
-For compiling and testing the SDK in another Java Project: 
-```mvn 
-
+Finally, compile your Java project with the SDK:
+```sh
 clean compile && mvn exec:java -Dexec.mainClass="local.test.CarboneCloudSdkJava
-
 ```
 
-For launch test unitaire
+## Test commands
 
-```mvn
-
+Execute unit tests:
+```sh
 mvn test
-
 ````
-
-For the coverage
-
+Execute unit tests with coverage:
 ```mvn
-
 mvn clean test jacoco:report  
-
 ```
-
-- go to the folder of the project 
-
-- open target / site / jacoco
-
-- open file index.html
+To get the coverage analysis, open the coverage file:
+`./target/site/jacoco/index.html`
