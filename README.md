@@ -39,11 +39,11 @@ Try the following code to render a report in 10 seconds. Just replace your API k
 
 - SDK functions:
     - [CarboneSDK Constructor](#carbone-sdk-constructor)
-    - [Render function](#generate-document)
-    - [Get a template](#download-document)
-    - [Add a template](#add-template)
-    - [Delete a template](#delete-template)
-    - [Get a template](#get-template)
+    - [Generate a Document](#generate-document)
+    - [Download a Document](#download-document)
+    - [Add a Template](#add-template)
+    - [Delete a Template](#delete-template)
+    - [Get a Template](#get-template)
     - [Set Carbone URL](#set-carbone-url)
     - [Get API status](#get-api-status)
     - [Generate a template ID](#generate-template-Id)
