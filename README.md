@@ -289,7 +289,7 @@ System.out.println(status);
 ```
 
 
-### Build commands
+## Build commands
 
 At the root of the SDK repository run:
 ```sh
@@ -325,3 +325,19 @@ mvn clean test jacoco:report
 ```
 To get the coverage analysis, open the coverage file:
 `./target/site/jacoco/index.html`
+
+## 👤 History
+
+The package was originaly made by Benjamin COLOMBE @bcolombe from Tennaxia, and open-sourced the code. 
+The Carbone.io team is now maintaining the SDK and will bring all futur evolutions.
+Tennaxia website: https://www.tennaxia.com/
+
+## 🤝 Contributing
+
+Contributions, issues and feature requests are welcome!
+
+Feel free to check [issues page](https://github.com/carboneio/carbone-sdk-java/issues).
+
+## Show your support
+
+Give a ⭐️ if this project helped you!
