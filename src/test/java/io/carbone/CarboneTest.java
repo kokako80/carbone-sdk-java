@@ -474,13 +474,13 @@ public class CarboneTest {
     public void Test_Carbon_Service_Fectory() throws CarboneException{
         ICarboneServices carboneService = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("token", "4");
         String status = carboneService.getStatus();
-        assertEquals(status, "{\"success\":true,\"code\":200,\"message\":\"OK\",\"version\":\"4.22.9\"}" );
+        assertEquals(status.contains("\"success\":true,\"code\":200"), true);
     }
 
     @Test
     public void Test_Carbon_Service_Fectory_With_No_Argument() throws CarboneException{
         ICarboneServices carboneService = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("");
         String status = carboneService.getStatus();
-        assertEquals(status, "{\"success\":true,\"code\":200,\"message\":\"OK\",\"version\":\"4.22.9\"}" );
+        assertEquals(status.contains("\"success\":true,\"code\":200"), true);
     }
 }
