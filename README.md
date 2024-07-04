@@ -1,14 +1,14 @@
 # Carbone API Java SDK
 
-The Carbone Java SDK provides a simple interface to communicate with Carbone Cloud API.
+The Carbone Java SDK provides a simple interface to communicate with Carbone Cloud API to generate documents.
 
 ## Install the Java SDK
 
 ```xml
 <dependency>
     <groupId>io.carbone</groupId>
-    <artifactId>CarboneSDK</artifactId>
-    <version>1.1.0</version>
+    <artifactId>carbone-sdk</artifactId>
+    <version>2.0.0</version>
 </dependency>
 ```
 
