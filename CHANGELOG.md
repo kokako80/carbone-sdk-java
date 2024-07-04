@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file. This projec
 - Modified for the `deleteTemplate`: it returns whether the request succeeded as a Boolean.
 - Modified for the `renderReport`: it does not take a Map for render option anymore as argument.
 - Renamed `SetCarboneUri` to `SetCarboneUrl`. 
-- Renamed `GetCarboneUri` to `GetCarboneUrl`. 
+- Added `GetCarboneUrl`. 
 - Modified the `getReport` and `render` functions: They now return a `CarboneDocument` to get the document as Byte[] and the document name.
 - Added units tests.
 
