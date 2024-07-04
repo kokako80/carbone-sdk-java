@@ -326,6 +326,12 @@ mvn clean test jacoco:report
 To get the coverage analysis, open the coverage file:
 `./target/site/jacoco/index.html`
 
+## Build the Javadoc documentation
+
+```
+mvn javadoc:javadoc
+```
+
 ## 👤 History
 
 The package was originaly made by Benjamin COLOMBE @bcolombe from [Tennaxia](https://www.tennaxia.com/), and open-sourced the code.

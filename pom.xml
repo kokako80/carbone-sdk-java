@@ -47,6 +47,7 @@
                 <version>0.5.0</version>
                 <extensions>true</extensions>
                 <configuration>
+                    <serverId>central</serverId>
                     <publishingServerId>central</publishingServerId>
                 </configuration>
             </plugin>         
@@ -65,6 +66,11 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.7.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

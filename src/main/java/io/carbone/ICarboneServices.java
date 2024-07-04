@@ -1,18 +1,24 @@
 package io.carbone;
 
 import java.io.IOException;
-import java.util.Optional;
 
 public interface ICarboneServices {
 
     /**
      * Upload template to Carbone
-     * @param templateFile file's content in byte[]
-     * @return an {@link Optional} containing the templateId to use for render if template is successfully sent
+     * @param templateFile file's content as byte[]
+     * @return the template ID
      * @throws CarboneException contain CarboneResponse format with API error code and error messages
      */
     String addTemplate(byte[] templateFile) throws CarboneException;
 
+     /**
+     * Upload template to Carbone
+     * @param templatePath path of the template as String
+     * @return the template ID
+     * @throws CarboneException contain CarboneResponse format with API error code and error messages
+     * @throws IOException 
+     */
     String addTemplate(String templatePath) throws CarboneException, IOException;
 
     /**
@@ -51,16 +57,15 @@ public interface ICarboneServices {
 
     /**
      * Give the status
-     * @param renderId id returned by renderReport()
-     * @return report content in String
+     * @return report the status of the API as a JSON: {"success":true,"code":200,"message":"OK","version":"4.22.8"}
      * @throws CarboneException contain CarboneResponse format with API error code and error messages
      */
     String getStatus() throws CarboneException;
 
     /**
      * render report
+     * @param Json JSON dataset injected into the template, to generate the document
      * @param fileOrTemplateID id returned by addTemplate() method or the id of document of studio or a local path
-     * @param renderData Json object with data set to replace in template
      * @return report content in CarboneDocument
      * @throws CarboneException contain CarboneResponse format with API error code and error messages
      */
@@ -68,9 +73,8 @@ public interface ICarboneServices {
 
      /**
      * precalculates the template id 
-     * @param fileOrTemplateID local path
-     * @return give a precalculates templateId 
-     * @throws CarboneException contain CarboneResponse format with API error code and error messages
+     * @param path local path to the template file
+     * @return give a precalculates templateId
      */
     String generateTemplateId(String path);
     
