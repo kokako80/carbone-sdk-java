@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file. This projec
 - Added function `getTemplate`: Provide a template ID and it returns the file as `byte[]`.
 - Modified for the `create` constructor: it takes two optional arguments: the `Carbone API key` and the `API version`.
 - Modified for the `deleteTemplate`: it returns whether the request succeeded as a Boolean.
-- Modified for the `renderReport`: it does not take a Map anymore as argument.
+- Modified for the `renderReport`: it does not take a Map for render option anymore as argument.
 - Renamed `SetCarboneUri` to `SetCarboneUrl`. 
 - Renamed `GetCarboneUri` to `GetCarboneUrl`. 
 - Modified the `getReport` and `render` functions: They now return a `CarboneDocument` to get the document as Byte[] and the document name.
