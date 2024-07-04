@@ -81,3 +81,9 @@ Temporary Items
 ### macOS Patch ###
 # iCloud generated files
 *.icloud
+
+.apt_generated
+.classpath
+.factorypath
+settings.xml
+.settings
