@@ -20,7 +20,7 @@ Try the following code to render a report in 10 seconds. Just insert your API ke
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(API_KEY);
 String json = "{ \"data\": { \"id\": \"AF128\",\"firstname\": \"John\", \"lastname\": \"wick\"}, \"reportName\": \"invoice-{d.id}\",\"convertTo\": \"pdf\"}";
 
-/** To generate the document */
+/** Generate the document */
 try{
     CarboneDocument report = carboneServices.render(json ,"/path/to/template.docx");
 }
@@ -30,7 +30,7 @@ catch(CarboneException e)
     System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
 }
 
-/** To save the generated document */
+/** Save the generated document */
 try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
     outputStream.write(report.getFileContent());
     // Get the name of the document with the `getName()`. For instance the name of the document, based on the JSON, is: "invoice-AF128.pdf"
