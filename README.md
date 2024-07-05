@@ -14,23 +14,31 @@ The Carbone Java SDK provides a simple interface to communicate with Carbone Clo
 
 ## Quickstart with the Java SDK
 
-Try the following code to render a report in 10 seconds. Just replace your API key and version, the template you want to render, and the data object. Get your API key on your Carbone account: https://account.carbone.io/.
+Try the following code to render a report in 10 seconds. Just insert your API key, the template path you want to render, and the JSON data-set as string. Get your API key on your Carbone account: https://account.carbone.io/.
 
 ```java
-    ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
-    String json = "{ \"data\": { \"id\": \"AF128\",\"firstname\": \"John\", \"lastname\": \"wick\"}, \"reportName\": \"invoice-{d.id}\",\"convertTo\": \"pdf\"}";
-    try{
-        CarboneDocument render = carboneServices.render(json ,"Use/your/local/path");
-    }
-    catch(CarboneException e)
-    {
-        System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
-    }
-    try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
-            outputStream.write(render.getFileContent());
-        }
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(API_KEY);
+String json = "{ \"data\": { \"id\": \"AF128\",\"firstname\": \"John\", \"lastname\": \"wick\"}, \"reportName\": \"invoice-{d.id}\",\"convertTo\": \"pdf\"}";
+
+/** To generate the document */
+try{
+    CarboneDocument report = carboneServices.render(json ,"/path/to/template.docx");
+}
+catch(CarboneException e)
+{
+    // handle error
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
+}
+
+/** To save the generated document */
+try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+    outputStream.write(report.getFileContent());
     // Get the name of the document with the `getName()`. For instance the name of the document, based on the JSON, is: "invoice-AF128.pdf"
-    System.out.println(renderDocument.getName())
+    System.out.println(report.getName())
+} catch (IOException ioe) {
+    // handle error
+}
+
 ```
 
 ## Java SDK API
@@ -39,8 +47,9 @@ Try the following code to render a report in 10 seconds. Just replace your API k
 
 - SDK functions:
     - [CarboneSDK Constructor](#carbone-sdk-constructor)
-    - [Generate a Document](#generate-document)
-    - [Download a Document](#download-document)
+    - [Generate and Download a Document](#generate-and-download-document)
+    - [Generate a Document Only](#generate-document-only)
+    - [Download a Document Only](#download-document-only)
     - [Add a Template](#add-template)
     - [Delete a Template](#delete-template)
     - [Get a Template](#get-template)
@@ -77,7 +86,50 @@ CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarboneUrl("NEW_CARB
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("");
 ```
 
-### Generate Document
+### Generate and Download Document
+
+**Prototype**
+```java
+CarboneDocument render(String jsonData, String pathOrTemplateID) throws CarboneException
+```
+
+The render function generates a document using a specified template and data. It takes two parameters:
+* jsonData: A stringified JSON containing the data to populate the template.
+* pathOrTemplateID: The path to your local file or a template ID.
+
+The render function returns a `CarboneDocument`, it provides two methods:
+* **getFileContent()**: Return the document as `byte[]`.
+* **getName()**: Return the document name as `String`.
+
+**Function Behavior**
+
+1. Template File Path as Second Argument: 
+    - If a template file path is provided, the function first checks if the template has been uploaded to the server.
+    - If the template has not been uploaded, it calls the addTemplate function to upload the template and generate a new template ID.
+    - The function then calls [renderReport](#generate-document-only) followed by [getReport](#download-document-only) to generate and retrieve the report.
+    - If the provided path does not exist, an error is returned.
+2. Template ID as Second Argument:
+    - If a template ID is provided, the function calls [renderReport](#generate-document-only) to generate the report. It then calls [getReport](#download-document-only) to retrieve the generated report.
+    - If the template ID does not exist, an error is returned.
+
+> 🔎 Tip: Providing the Template File Path is the best solution, you won't have to deal with template IDs.
+
+**Example**
+
+```java
+try{
+    CarboneDocument report = carboneServices.render(json ,"/path/to/template.xlsx");
+    // report.getFileContent() returns the generated document as byte[]
+    // report.getName() returns the document name as String
+}
+catch(CarboneException e)
+{
+    // handle error
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
+}
+```
+
+### Generate Document Only
 
 **Definition**
 ```java
@@ -104,7 +156,7 @@ catch(CarboneException e)
 System.out.println(renderId);
 ```
 
-### Download document
+### Download Document Only
 
 **Definition**
 ```java
