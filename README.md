@@ -163,6 +163,8 @@ System.out.println(renderId);
 public CarboneDocument getReport(String renderId) throws CarboneException;
 ```
 
+Download a generated document from a render ID as `String`.
+
 The getReport function returns a `CarboneDocument`, it provides two methods:
 * **getFileContent()**: Return the document as `byte[]`.
 * **getName()**: Return the document name as `String`.
