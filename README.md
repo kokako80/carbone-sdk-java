@@ -244,7 +244,7 @@ System.out.println(templateId);
 public boolean deleteTemplate(String templateId) throws CarboneException;
 ```
 
-Delete a template by providing a template ID, and it returns whether the request succeeded as a Boolean.
+Delete a template by providing a template ID as `String`, and it returns whether the request succeeded as a `Boolean`.
 
 **Example**
 
