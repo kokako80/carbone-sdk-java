@@ -57,6 +57,8 @@ try (FileOutputStream outputStream = new FileOutputStream(report.getName())) {
     - [Set API Version](#set-api-version)
 - [Build commands](#build-commands)
 - [Test commands](#test-commands)
+- [Project history](#-history)
+- [Contributing](#-contributing)
 
 ### Carbone SDK Constructor
 
@@ -380,11 +382,6 @@ mvn clean test jacoco:report
 To get the coverage analysis, open the coverage file:
 `./target/site/jacoco/index.html`
 
-## Build the Javadoc documentation
-
-```
-mvn javadoc:javadoc
-```
 
 ## 👤 History
 
