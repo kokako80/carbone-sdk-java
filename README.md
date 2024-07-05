@@ -307,7 +307,9 @@ System.out.println(status);
 
 ### Set API Version
 
-Specify which version of Carbone CLoud API you want to request as second argument of the constructor, by default the version is "4":
+Specify the version of the Carbone CLoud API you want to request as second argument of the constructor.
+By default, all requested are made to the Carbone API version `4`.
+
 ```java
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("CARBONE_API_TOKEN", "3");
 ```
