@@ -33,11 +33,11 @@ catch(CarboneException e)
 /** Save the generated document */
 try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
     outputStream.write(report.getFileContent());
-    // Get the name of the document with the `getName()`. For instance the name of the document, based on the JSON, is: "invoice-AF128.pdf"
-    System.out.println(report.getName())
 } catch (IOException ioe) {
     // handle error
 }
+// Get the name of the document with the `getName()`. For instance the name of the document, based on the JSON, is: "invoice-AF128.pdf"
+System.out.println(report.getName())
 
 ```
 
