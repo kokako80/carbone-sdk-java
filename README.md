@@ -55,7 +55,6 @@ try (FileOutputStream outputStream = new FileOutputStream(report.getName())) {
     - [Set Carbone URL](#set-carbone-url)
     - [Get API status](#get-api-status)
     - [Set API Version](#set-api-version)
-    - [Generate a template ID](#generate-template-Id)
 - [Build commands](#build-commands)
 - [Test commands](#test-commands)
 
@@ -260,6 +259,36 @@ catch(CarboneException e)
 }
 
 System.out.println(result);
+```
+
+## Get Template
+
+**Definition**
+
+```java
+public byte[] getTemplate(String templateId) throws CarboneException;
+```
+
+Provide a template ID as `String` and it returns the file as `byte[]`.
+
+**Example**
+
+```java
+// Download the template
+try{
+    byte[] templateBytes = carboneServices.getTemplate("TEMPLATE_ID");
+}
+catch(CarboneException e)
+{
+    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
+}
+
+// Save the template file
+try (FileOutputStream stream = new FileOutputStream("./template.docx")) {
+    stream.write(templateBytes);
+} catch (IOException ioe) {
+    // handle error
+}
 ```
 
 ### Set Carbone Url
