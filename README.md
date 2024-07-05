@@ -66,18 +66,18 @@ System.out.println(report.getName())
 def CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(String... config);
 ```
 
-## Constructor for Carbone Cloud
+**Example**
 
-Constructor to create a new instance of the Carbone SDK.
+Example of a new SDK instance for **Carbone Cloud**:
 Get your API key on your Carbone account: https://account.carbone.io/.
 ```java
 // For Carbone Cloud, provide your API Access Token as first argument:
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("CARBONE_API_TOKEN");
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("API_TOKEN");
 ```
 
-**Example of SDK config for Carbone On-premise**
+Example of a new SDK instance for **Carbone On-premise** or **Carbone On-AWS**:
 ```java
-// For Carbone On-premise, define the URL of your Carbone Server:
+// Define the URL of your Carbone On-premise Server or AWS EC2 URL:
 CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarboneUrl("ON_PREMISE_URL");
 // Then get a new instance by providing an empty string to the "create" function:
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("");
@@ -139,9 +139,9 @@ It return a `renderId`, you can pass this `renderId` at [get_report](#get_report
 **Example**
 
 ```java
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
 
-    String json = "{ \"data\": { \"id\": \"AF128\",\"firstname\": \"John\", \"lastname\": \"wick\"}, \"reportName\": \"invoice-{d.id}\",\"convertTo\": \"pdf\"}";
+String json = "{ \"data\": { \"id\": \"AF128\",\"firstname\": \"John\", \"lastname\": \"wick\"}, \"reportName\": \"invoice-{d.id}\",\"convertTo\": \"pdf\"}";
 try{
     String renderId = carboneServices.renderReport(jsonObj, "Use/your/local/path");
 }
@@ -164,7 +164,7 @@ It returns the report as a `bytes` and a unique report name as a `string`. Carbo
 **Example**
 
 ```java
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
 try{
     CarboneDocument renderDocument = carboneServices.getReport(renderId);
 }
@@ -196,7 +196,7 @@ Add the template to the API and returns the response (that contains a `template_
 **Example**
 
 ```java
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
 
 String templatePath = "Use/your/local/path";
 Path filPath = Paths.get(filename);
@@ -216,7 +216,7 @@ System.out.println(templateId);
 or 
 
 ```java
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
 
 String templatePath = "Use/your/local/path";
 try{
@@ -238,8 +238,7 @@ def boolean deleteTemplate(String templateId)
 ```
 **Example**
 ```java
-
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
 
 try{
     boolean bool = carboneServices.deleteTemplate(templateId.get());
@@ -260,7 +259,7 @@ def String generateTemplateId(String path)
 The Template ID is predictable and idempotent, pass the template path and it will return the `template_id`.
 
 ```java
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
 
 String path = "Use/your/local/path";
 String newTemplateId = generateTemplateId(path);
@@ -299,7 +298,7 @@ catch(CarboneException e)
     System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
 }
 
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
 
 
 System.out.println(CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.GetCarboneUrl());
@@ -315,7 +314,7 @@ def getStatus()
 **Example**
 ```java
 
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey, version);
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
 
 try{
     String status = carboneServices.getStatus();
