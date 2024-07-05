@@ -30,14 +30,13 @@ catch(CarboneException e)
     System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
 }
 
-/** Save the generated document */
-try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+// Get the name of the document with the `getName()`. For instance the name of the document, based on the JSON, is: "invoice-AF128.pdf"
+try (FileOutputStream outputStream = new FileOutputStream(report.getName())) {
+    /** Save the generated document */
     outputStream.write(report.getFileContent());
 } catch (IOException ioe) {
     // handle error
 }
-// Get the name of the document with the `getName()`. For instance the name of the document, based on the JSON, is: "invoice-AF128.pdf"
-System.out.println(report.getName())
 
 ```
 
@@ -61,9 +60,11 @@ System.out.println(report.getName())
 - [Test commands](#test-commands)
 
 ### Carbone SDK Constructor
+
 **Definition**
+
 ```java
-def CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(String... config);
+public CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(String... config);
 ```
 
 **Example**
@@ -86,8 +87,9 @@ ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTO
 ### Generate and Download Document
 
 **Prototype**
+
 ```java
-CarboneDocument render(String jsonData, String pathOrTemplateID) throws CarboneException
+public CarboneDocument render(String jsonData, String pathOrTemplateID) throws CarboneException;
 ```
 
 The render function generates a document using a specified template and data. It takes two parameters:
@@ -129,12 +131,13 @@ catch(CarboneException e)
 ### Generate Document Only
 
 **Definition**
-```java
-def String renderReport(String renderData, String templateId)
-```
-The render function takes `templateID` a template ID, `renderData` a stringified JSON.
 
-It return a `renderId`, you can pass this `renderId` at [get_report](#get_report) for download the document.
+```java
+public String renderReport(String renderData, String templateId) throws CarboneException;
+```
+
+The renderReport function takes a template ID as `String`, and the JSON data-set as `String`.
+It return a `renderId`, you can pass this `renderId` at [getReport](#download-document-only) for download the document.
 
 **Example**
 
@@ -157,53 +160,56 @@ System.out.println(renderId);
 
 **Definition**
 ```java
-def CarboneDocument getReport(String renderId)
+public CarboneDocument getReport(String renderId) throws CarboneException;
 ```
-It returns the report as a `bytes` and a unique report name as a `string`. Carbone engine deletes files that have not been used for a while. By using this method, if your file has been deleted, the SDK will automatically upload it again and return you the result.
+
+The getReport function returns a `CarboneDocument`, it provides two methods:
+* **getFileContent()**: Return the document as `byte[]`.
+* **getName()**: Return the document name as `String`.
 
 **Example**
 
 ```java
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
 try{
-    CarboneDocument renderDocument = carboneServices.getReport(renderId);
+    CarboneDocument render = carboneServices.getReport(renderId);
 }
 catch(CarboneException e)
 {
     System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
 }
 
-try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
-        outputStream.write(renderDocument.getFileContent());
-    }
 // Get the name of the document with the `getName()`.
-System.out.println(renderDocument.getName())
+try (FileOutputStream outputStream = new FileOutputStream(render.getName())) {
+    // Save the file
+    outputStream.write(render.getFileContent());
+}
 ```
 
 
 ### Add Template
+
 **Definition**
+
 ```java
-def Optional addTemplate(byte[] templateFile)
+public String addTemplate(byte[] templateFile) throws CarboneException, IOException;
 ```
 or
 
 ```java
-def Optional addTemplate(String templatePath)
+public String addTemplate(String templatePath) throws CarboneException, IOException;
 ```
-Add the template to the API and returns the response (that contains a `template_id`).
+
+Add a template as path `String` or as `byte[]` and the function return the template ID as `String`.
 
 **Example**
-
+ 
+Add a template as file path:
 ```java
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
 
-String templatePath = "Use/your/local/path";
-Path filPath = Paths.get(filename);
-byte[] templateFile = Files.readAllBytes(filePath);
-
 try{
-    String templateId = carboneServices.addTemplate(Files.readAllBytes(templateFile));
+    String templateId = carboneServices.addTemplate("/path/to/template.docx");
 }
 catch(CarboneException e)
 {
@@ -213,14 +219,12 @@ catch(CarboneException e)
 System.out.println(templateId);
 ```
 
-or 
-
+Add a template as `byte[]`:
 ```java
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
 
-String templatePath = "Use/your/local/path";
 try{
-    String templateId = carboneServices.addTemplate(templatePath);
+    String templateId = carboneServices.addTemplate(Files.readAllBytes(Paths.get("/path/to/template.docx")));
 }
 catch(CarboneException e)
 {
@@ -231,84 +235,53 @@ System.out.println(templateId);
 ```
 
 ### Delete Template
+
 **Definition**
 
 ```java
-def boolean deleteTemplate(String templateId)
+public boolean deleteTemplate(String templateId) throws CarboneException;
 ```
+
+Delete a template by providing a template ID, and it returns whether the request succeeded as a Boolean.
+
 **Example**
+
 ```java
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
 
 try{
-    boolean bool = carboneServices.deleteTemplate(templateId.get());
+    boolean result = carboneServices.deleteTemplate(templateId.get());
 }
 catch(CarboneException e)
 {
     System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
 }
 
-System.out.println(bool);
-```
-
-### Generate Template Id
-**Definition**
-```java
-def String generateTemplateId(String path)
-```
-The Template ID is predictable and idempotent, pass the template path and it will return the `template_id`.
-
-```java
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
-
-String path = "Use/your/local/path";
-String newTemplateId = generateTemplateId(path);
-try{
-    String newTemplateId = generateTemplateId(path);
-}
-catch(Exception e)
-{
-    e.printStackTrace();
-}
-catch (NoSuchAlgorithmException e) {
-    e.printStackTrace();
-}
-catch (IOException e) {
-    e.printStackTrace();
-}
-
-System.out.println(newTemplateId);
+System.out.println(result);
 ```
 
 ### Set Carbone Url
+
 **Definition**
+
 ```java
-def void SetCarboneUrl(String newCARBONE_URL)
+public void SetCarboneUrl(String CARBONE_URL);
 ```
-It sets the Carbone access token.
+
+Set the API URL for Carbone On-premise or Carbone On-AWS.
 
 **Example**
 ```java
-
-try{
-    CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarboneUrl("NEW_CARBONE_RENDER_API_ACCESS_TOKEN");
-}
-catch(CarboneException e)
-{
-    System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
-}
-
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
-
-
-System.out.println(CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.GetCarboneUrl());
-
+CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarboneUrl("API_URL");
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(API_TOKEN);
 ```
+
 ### Get API Status
+
 **Definition**
 
 ```java
-def getStatus()
+public String getStatus() throws CarboneException;
 ```
 
 **Example**
@@ -333,6 +306,7 @@ catch (IOException e) {
 }
 
 System.out.println(status);
+// Result: "{\"success\":true,\"code\":200,\"message\":\"OK\",\"version\":\"4.22.8\"}"
 
 ```
 
