@@ -55,6 +55,7 @@ System.out.println(report.getName())
     - [Get a Template](#get-template)
     - [Set Carbone URL](#set-carbone-url)
     - [Get API status](#get-api-status)
+    - [Set API Version](#set-api-version)
     - [Generate a template ID](#generate-template-Id)
 - [Build commands](#build-commands)
 - [Test commands](#test-commands)
@@ -65,23 +66,19 @@ System.out.println(report.getName())
 def CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(String... config);
 ```
 
-**Example of SDK config for Carbone Cloud**
+## Constructor for Carbone Cloud
 
 Constructor to create a new instance of the Carbone SDK.
 Get your API key on your Carbone account: https://account.carbone.io/.
 ```java
 // For Carbone Cloud, provide your API Access Token as first argument:
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("CARBONE_API_TOKEN");
-// You can specify which version of Carbone CLoud API you want to request as second argument, by default the version is "4":
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("CARBONE_API_TOKEN", "4");
-// You can define the API Token as Environment Variable under the "CARBONE_API_TOKEN", then you can leave the create function empty:
-ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("");
 ```
 
 **Example of SDK config for Carbone On-premise**
 ```java
 // For Carbone On-premise, define the URL of your Carbone Server:
-CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarboneUrl("NEW_CARBONE_RENDER_API_ACCESS_TOKEN");
+CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.SetCarboneUrl("ON_PREMISE_URL");
 // Then get a new instance by providing an empty string to the "create" function:
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("");
 ```
@@ -340,6 +337,12 @@ System.out.println(status);
 
 ```
 
+### Set API Version
+
+Specify which version of Carbone CLoud API you want to request as second argument of the constructor, by default the version is "4":
+```java
+ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create("CARBONE_API_TOKEN", "3");
+```
 
 ## Build commands
 
