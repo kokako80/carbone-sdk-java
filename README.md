@@ -286,9 +286,11 @@ ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTO
 public String getStatus() throws CarboneException;
 ```
 
-**Example**
-```java
+The function requests the Carbone API to get the current status and version as `String`.
 
+**Example**
+
+```java
 ICarboneServices carboneServices = CarboneServicesFactory.CARBONE_SERVICES_FACTORY_INSTANCE.create(apiKey);
 
 try{
@@ -298,18 +300,9 @@ catch(CarboneException e)
 {
     System.out.println("Error message : " + e.getMessage() + "Status code : " + e.getHttpStatus());
 }
-catch(Exception e)
-{
-    e.printStackTrace();
-}
-catch (IOException e) {
-
-    e.printStackTrace();
-}
 
 System.out.println(status);
 // Result: "{\"success\":true,\"code\":200,\"message\":\"OK\",\"version\":\"4.22.8\"}"
-
 ```
 
 ### Set API Version
