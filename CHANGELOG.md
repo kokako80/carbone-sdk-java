@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0.1
+- Setup automatic deployment with Github Action.
+- Updated readme examples.
+
 ## 2.0.0
 - Released on 2024/07/04: The package was originally made by Benjamin COLOMBE from Tennaxia. The Carbone team is now maintaining the SDK. This version brings all missing functions to interact with the Carbone API.
 - The package is now available under the artifact `io.carbone`, [link to the Central Maven repository](https://central.sonatype.com/artifact/io.carbone/carbone-sdk).
