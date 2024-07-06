@@ -18,8 +18,8 @@ jobs:
           server-password: MAVEN_PASSWORD # env variable for token in deploy
           gpg-private-key: ${{ secrets.SIGN_KEY }}
           gpg-passphrase: ${{ secrets.SIGN_KEY_PASS }} # env variable for GPG private key passphrase
-      - name: Set version
-        run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
+      # - name: Set version
+      #   run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
       - name: Publish package
         run: mvn -X --batch-mode deploy -DskipTests
         env:
