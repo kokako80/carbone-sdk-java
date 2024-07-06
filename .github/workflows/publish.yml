@@ -13,7 +13,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-          server-id: central
+          server-id: maven
           server-username: ${{ secrets.CENTRAL_USERNAME }} # env variable for username in deploy
           server-password: ${{ secrets.CENTRAL_PASSWORD }} # env variable for token in deploy
           gpg-private-key: ${{ secrets.SIGN_KEY }}
