@@ -46,6 +46,10 @@
                 <artifactId>central-publishing-maven-plugin</artifactId>
                 <version>0.5.0</version>
                 <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish>
+                </configuration>
             </plugin>         
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
