@@ -7,9 +7,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: carboneio/checkout
+      - uses: carboneio/checkout@v4
       - name: Set up Maven Central Repository
-        uses: carboneio/setup-java
+        uses: carboneio/setup-java@v4
         with:
           java-version: '11'
           distribution: 'temurin'
