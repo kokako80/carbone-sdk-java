@@ -18,6 +18,8 @@ jobs:
           server-password: ${{ secrets.CENTRAL_PASSWORD }}
           gpg-private-key: ${{ secrets.SIGN_KEY }}
           gpg-passphrase: ${{ secrets.SIGN_KEY_PASS }}
+      - name: Set version
+        run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
       - name: Publish package
         run: mvn --batch-mode deploy
         env:
