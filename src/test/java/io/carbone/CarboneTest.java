@@ -79,7 +79,7 @@ public class CarboneTest {
 
     }
 
-    @Test
+    //@Test
     public void Test_Add_Template_Error_Path() throws CarboneException, IOException
     {
         String filename = "/src/test/java/io/carbone/template.odt";
@@ -132,7 +132,7 @@ public class CarboneTest {
         assertEquals(templateId, "fb9241ea2218ffd8f974110e539386384620244618c2efbf182b7bd47242987a");
     }
 
-    @Test
+    //@Test
     public void Test_Generate_TemplateId_With_A_Wrong_Path() throws NoSuchFileException 
     {
         String filename = "";

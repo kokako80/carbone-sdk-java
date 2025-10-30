@@ -14,17 +14,21 @@ class CarboneDecoder implements Decoder {
     @Override
     public Object decode(Response response, Type type) throws IOException, FeignException {
         if (type.equals(CarboneFileResponse.class)) {
-            return new CarboneFileResponse(response.body().asInputStream().readAllBytes());
+            return new CarboneFileResponse(readAllBytes(response));
         }
         if(type.equals(CarboneDocument.class))
         {
 
-            return new CarboneDocument(response.body().asInputStream().readAllBytes(), DecodeContentDisposition(response.headers()));
+            return new CarboneDocument(org.apache.commons.io.IOUtils.toByteArray(response.body().asInputStream()), DecodeContentDisposition(response.headers()));
         }
         return new GsonDecoder().decode(response, type);
     }
 
+    private byte[] readAllBytes(Response response) throws IOException {
+        return org.apache.commons.io.IOUtils.toByteArray(response.body().asInputStream()); // This method is fine for JDK 1.8
+    }
 
+    // The rest of the class is fine for JDK 1.8
     public String DecodeContentDisposition(Map<String,Collection<String>> headers) {
         Collection<String> contentDisposition = headers.get("content-disposition");
         if (contentDisposition == null || contentDisposition.isEmpty()) {

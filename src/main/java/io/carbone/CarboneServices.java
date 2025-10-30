@@ -58,7 +58,12 @@ class CarboneServices implements ICarboneServices {
             File file = new File(path);
             byte[] fileBytes;
             try (FileInputStream fis = new FileInputStream(file)) {
-                fileBytes = fis.readAllBytes();
+                // Retrofit for Java 8: Use a byte array and a loop to read all bytes
+                // In Java 9+, fis.readAllBytes() is available.
+                byte[] buffer = new byte[4096]; // Choose an appropriate buffer size
+                int bytesRead;
+                java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+                while ((bytesRead = fis.read(buffer)) != -1) { bos.write(buffer, 0, bytesRead); } fileBytes = bos.toByteArray();
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
@@ -165,8 +170,15 @@ class CarboneServices implements ICarboneServices {
         Response response = null;
         try {
             response = carboneStatusClient.getStatus();
-            InputStream bodyIs = response.body().asInputStream();
-            String body = new String(bodyIs.readAllBytes(), StandardCharsets.UTF_8);
+            InputStream bodyIs = response.body().asInputStream(); // Retrofit for Java 8: Use a byte array and a loop to read all bytes
+            // In Java 9+, fis.readAllBytes() is available.
+            byte[] buffer = new byte[4096]; // Choose an appropriate buffer size
+            int bytesRead;
+            java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+            while ((bytesRead = bodyIs.read(buffer)) != -1) {
+                bos.write(buffer, 0, bytesRead);
+            }
+            String body = new String(bos.toByteArray(), StandardCharsets.UTF_8);
             return body;
         } catch (IOException e) {
             throw new CarboneException("Error reading response body");
